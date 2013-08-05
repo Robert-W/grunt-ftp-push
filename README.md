@@ -37,48 +37,55 @@ grunt.initConfig({
 
 ### Options
 
-#### options.separator
-Type: `String`
-Default value: `',  '`
+#### Options.Username
+Type: `String` 
+Default: `None`
 
-A string value that is used to do something with whatever.
+Username for logging into the FTP server.
 
-#### options.punctuation
-Type: `String`
-Default value: `'.'`
+#### Password
+Type: `String` 
+Default: `None`
 
-A string value that is used to do something else with whatever else.
+Password for logging into the FTP server.
+
+#### host
+Type: `String` 
+Default: `None`
+
+URL host of your FTP Server.
+
+#### dest
+Type: `String` 
+Default: `None`
+
+Destination of where you want your files pushed to, relative to the host.
+
+#### port
+Type: `Number` 
+Default: `21`
+
+Port for accessing the FTP server.
 
 ### Usage Examples
 
 #### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
+In this example, the default options are used to set up the necessary components of pushing files to an FTP server. This is meant to be very basic, the files you specify in `files` will be pushed one by one to `host + dest`.
 
 ```js
 grunt.initConfig({
   ftp_push: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-})
-```
-
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
-
-```js
-grunt.initConfig({
-  ftp_push: {
-    options: {
-      separator: ': ',
-      punctuation: ' !!!',
-    },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
+        options: {
+          username: "{{Username}}",
+          password: "{{Password}}",
+          host: "sample.server.com",
+          dest: "/html/test/",
+          port: 21
+        },
+        files: [ // Enable Dynamic Expansion, Src matches are relative to this path, Actual Pattern(s) to match
+          {expand: true,cwd: 'test',src: ['**/*']}
+        ]
+      }
 })
 ```
 

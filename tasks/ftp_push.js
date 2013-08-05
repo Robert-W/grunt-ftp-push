@@ -18,10 +18,7 @@ module.exports = function(grunt) {
     var Ftp = require('jsftp');
 
     // Merge task-specific and/or target-specific options with these defaults.
-    var options = this.options({
-      punctuation: '.',
-      separator: ', '
-    });
+    var options = this.options();
 
     // filepaths array to store all the files found by grunt
     var filepaths = [];
