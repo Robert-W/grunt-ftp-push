@@ -1,79 +1,154 @@
 <!DOCTYPE html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Grunt-ftp-push : " />
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
 
-    <title>Grunt-ftp-push</title>
+    <title>Grunt-ftp-push by Robert-W</title>
   </head>
 
   <body>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/Robert-W/grunt-ftp-push">View on GitHub</a>
+    <header>
+      <div class="container">
+        <h1>Grunt-ftp-push</h1>
+        <h2></h2>
 
-          <h1 id="project_title">Grunt-ftp-push</h1>
-          <h2 id="project_tagline"></h2>
+        <section id="downloads">
+          <a href="https://github.com/Robert-W/grunt-ftp-push/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/Robert-W/grunt-ftp-push/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/Robert-W/grunt-ftp-push" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/Robert-W/grunt-ftp-push/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/Robert-W/grunt-ftp-push/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a name="grunt-ftp-push" class="anchor" href="#grunt-ftp-push"><span class="octicon octicon-link"></span></a>grunt-ftp-push</h1>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+<blockquote>
+<p>Deploy your files to a FTP server,</p>
+</blockquote>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<p>This plugin requires Grunt <code>~0.4.1</code></p>
+
+<p>If you haven't used <a href="http://gruntjs.com/">Grunt</a> before, be sure to check out the <a href="http://gruntjs.com/getting-started">Getting Started</a> guide, as it explains how to create a <a href="http://gruntjs.com/sample-gruntfile">Gruntfile</a> as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:</p>
+
+<pre lang="shell"><code>npm install grunt-ftp-push --save-dev
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<p>Once the plugin has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:</p>
+
+<div class="highlight"><pre><span class="nx">grunt</span><span class="p">.</span><span class="nx">loadNpmTasks</span><span class="p">(</span><span class="s1">'grunt-ftp-push'</span><span class="p">);</span>
+</pre></div>
+
+<h2>
+<a name="the-ftp_push-task" class="anchor" href="#the-ftp_push-task"><span class="octicon octicon-link"></span></a>The "ftp_push" task</h2>
 
 <h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<a name="overview" class="anchor" href="#overview"><span class="octicon octicon-link"></span></a>Overview</h3>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<p>In your project's Gruntfile, add a section named <code>ftp_push</code> to the data object passed into <code>grunt.initConfig()</code>.</p>
+
+<div class="highlight"><pre><span class="nx">grunt</span><span class="p">.</span><span class="nx">initConfig</span><span class="p">({</span>
+  <span class="nx">ftp_push</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+      <span class="c1">// Task-specific options go here.</span>
+    <span class="p">},</span>
+    <span class="nx">files</span><span class="o">:</span> <span class="p">{</span>
+      <span class="c1">// Target-specific file lists.</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</pre></div>
 
 <h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<a name="options" class="anchor" href="#options"><span class="octicon octicon-link"></span></a>Options</h3>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<h4>
+<a name="optionsusername" class="anchor" href="#optionsusername"><span class="octicon octicon-link"></span></a>Options.Username</h4>
+
+<p>Type: <code>String</code> 
+Default: <code>None</code></p>
+
+<p>Username for logging into the FTP server.</p>
+
+<h4>
+<a name="password" class="anchor" href="#password"><span class="octicon octicon-link"></span></a>Password</h4>
+
+<p>Type: <code>String</code> 
+Default: <code>None</code></p>
+
+<p>Password for logging into the FTP server.</p>
+
+<h4>
+<a name="host" class="anchor" href="#host"><span class="octicon octicon-link"></span></a>host</h4>
+
+<p>Type: <code>String</code> 
+Default: <code>None</code></p>
+
+<p>URL host of your FTP Server.</p>
+
+<h4>
+<a name="dest" class="anchor" href="#dest"><span class="octicon octicon-link"></span></a>dest</h4>
+
+<p>Type: <code>String</code> 
+Default: <code>None</code></p>
+
+<p>Destination of where you want your files pushed to, relative to the host.</p>
+
+<h4>
+<a name="port" class="anchor" href="#port"><span class="octicon octicon-link"></span></a>port</h4>
+
+<p>Type: <code>Number</code> 
+Default: <code>21</code></p>
+
+<p>Port for accessing the FTP server.</p>
 
 <h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<a name="usage-examples" class="anchor" href="#usage-examples"><span class="octicon octicon-link"></span></a>Usage Examples</h3>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<h4>
+<a name="default-options" class="anchor" href="#default-options"><span class="octicon octicon-link"></span></a>Default Options</h4>
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<p>In this example, the default options are used to set up the necessary components of pushing files to an FTP server. This is meant to be very basic, the files you specify in <code>files</code> will be pushed one by one to <code>host + dest</code>.</p>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<div class="highlight"><pre><span class="nx">grunt</span><span class="p">.</span><span class="nx">initConfig</span><span class="p">({</span>
+  <span class="nx">ftp_push</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+          <span class="nx">username</span><span class="o">:</span> <span class="s2">"{{Username}}"</span><span class="p">,</span>
+          <span class="nx">password</span><span class="o">:</span> <span class="s2">"{{Password}}"</span><span class="p">,</span>
+          <span class="nx">host</span><span class="o">:</span> <span class="s2">"sample.server.com"</span><span class="p">,</span>
+          <span class="nx">dest</span><span class="o">:</span> <span class="s2">"/html/test/"</span><span class="p">,</span>
+          <span class="nx">port</span><span class="o">:</span> <span class="mi">21</span>
+        <span class="p">},</span>
+        <span class="nx">files</span><span class="o">:</span> <span class="p">[</span> <span class="c1">// Enable Dynamic Expansion, Src matches are relative to this path, Actual Pattern(s) to match</span>
+          <span class="p">{</span><span class="nx">expand</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span><span class="nx">cwd</span><span class="o">:</span> <span class="s1">'test'</span><span class="p">,</span><span class="nx">src</span><span class="o">:</span> <span class="p">[</span><span class="s1">'**/*'</span><span class="p">]}</span>
+        <span class="p">]</span>
+      <span class="p">}</span>
+<span class="p">})</span>
+</pre></div>
+
+<h2>
+<a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h2>
+
+<p>In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using <a href="http://gruntjs.com/">Grunt</a>.</p>
+
+<h2>
+<a name="release-history" class="anchor" href="#release-history"><span class="octicon octicon-link"></span></a>Release History</h2>
+
+<p><em>(Nothing yet)</em></p>
       </section>
     </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Grunt-ftp-push maintained by <a href="https://github.com/Robert-W">Robert-W</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
     
-
   </body>
 </html>
