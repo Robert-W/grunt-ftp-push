@@ -74,20 +74,12 @@
 <a name="options" class="anchor" href="#options"><span class="octicon octicon-link"></span></a>Options</h3>
 
 <h4>
-<a name="optionsusername" class="anchor" href="#optionsusername"><span class="octicon octicon-link"></span></a>Options.Username</h4>
+<a name="authkey" class="anchor" href="#authkey"><span class="octicon octicon-link"></span></a>authKey</h4>
 
 <p>Type: <code>String</code> 
 Default: <code>None</code></p>
 
-<p>Username for logging into the FTP server.</p>
-
-<h4>
-<a name="password" class="anchor" href="#password"><span class="octicon octicon-link"></span></a>Password</h4>
-
-<p>Type: <code>String</code> 
-Default: <code>None</code></p>
-
-<p>Password for logging into the FTP server.</p>
+<p>Name of authKey that will be used for your credentials to access the FTP server.  This name should match the name of the credentials you want to use in the <code>.ftpauth</code> file.</p>
 
 <h4>
 <a name="host" class="anchor" href="#host"><span class="octicon octicon-link"></span></a>host</h4>
@@ -117,6 +109,23 @@ Default: <code>21</code></p>
 <a name="usage-examples" class="anchor" href="#usage-examples"><span class="octicon octicon-link"></span></a>Usage Examples</h3>
 
 <h4>
+<a name="sample-ftpauth-file" class="anchor" href="#sample-ftpauth-file"><span class="octicon octicon-link"></span></a>Sample .ftpauth file</h4>
+
+<p>This file should be named <code>.ftpauth</code> and be in the same directory as your <code>Gruntfile.js</code>.  It is a JSON object with an "authKey" that has a username and password for it's value. Use the following as a guide for setting up your file.</p>
+
+<div class="highlight"><pre><span class="p">{</span>
+    <span class="s2">"serverA"</span><span class="o">:</span><span class="p">{</span>
+        <span class="s2">"username"</span><span class="o">:</span><span class="s2">"myUserName@gmail.com"</span><span class="p">,</span>
+        <span class="s2">"password"</span><span class="o">:</span><span class="s2">"password123456"</span>
+    <span class="p">},</span>
+    <span class="s2">"serverB"</span><span class="o">:</span><span class="p">{</span>
+        <span class="s2">"username"</span><span class="o">:</span><span class="s2">"myOtherUsername@gmail.com"</span><span class="p">,</span>
+        <span class="s2">"password"</span><span class="o">:</span><span class="s2">"12345Pass"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h4>
 <a name="default-options" class="anchor" href="#default-options"><span class="octicon octicon-link"></span></a>Default Options</h4>
 
 <p>In this example, the default options are used to set up the necessary components of pushing files to an FTP server. This is meant to be very basic, the files you specify in <code>files</code> will be pushed one by one to <code>host + dest</code>.</p>
@@ -124,8 +133,7 @@ Default: <code>21</code></p>
 <div class="highlight"><pre><span class="nx">grunt</span><span class="p">.</span><span class="nx">initConfig</span><span class="p">({</span>
   <span class="nx">ftp_push</span><span class="o">:</span> <span class="p">{</span>
         <span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
-          <span class="nx">username</span><span class="o">:</span> <span class="s2">"{{Username}}"</span><span class="p">,</span>
-          <span class="nx">password</span><span class="o">:</span> <span class="s2">"{{Password}}"</span><span class="p">,</span>
+          <span class="nx">authKey</span><span class="o">:</span> <span class="s2">"serverA"</span><span class="p">,</span>
           <span class="nx">host</span><span class="o">:</span> <span class="s2">"sample.server.com"</span><span class="p">,</span>
           <span class="nx">dest</span><span class="o">:</span> <span class="s2">"/html/test/"</span><span class="p">,</span>
           <span class="nx">port</span><span class="o">:</span> <span class="mi">21</span>
@@ -136,6 +144,35 @@ Default: <code>21</code></p>
       <span class="p">}</span>
 <span class="p">})</span>
 </pre></div>
+
+<h4>
+<a name="optional-options" class="anchor" href="#optional-options"><span class="octicon octicon-link"></span></a>Optional Options</h4>
+
+<p>For your options object which normally looks like this:</p>
+
+<div class="highlight"><pre><span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">authKey</span><span class="o">:</span> <span class="s2">"serverA"</span><span class="p">,</span>
+    <span class="nx">host</span><span class="o">:</span> <span class="s2">"sample.server.com"</span><span class="p">,</span>
+    <span class="nx">dest</span><span class="o">:</span> <span class="s2">"/html/test/"</span><span class="p">,</span>
+    <span class="nx">port</span><span class="o">:</span> <span class="mi">21</span>
+<span class="p">},</span>
+</pre></div>
+
+<p>You can also not create an .ftpauth file if you choose and pass the username and password in this way: </p>
+
+<div class="highlight"><pre><span class="nx">options</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">username</span><span class="o">:</span> <span class="s2">"myUsername"</span><span class="p">,</span>
+    <span class="nx">password</span><span class="o">:</span> <span class="s2">"myPassword"</span><span class="p">,</span>
+    <span class="nx">host</span><span class="o">:</span> <span class="s2">"sample.server.com"</span><span class="p">,</span>
+    <span class="nx">dest</span><span class="o">:</span> <span class="s2">"/html/test/"</span><span class="p">,</span>
+    <span class="nx">port</span><span class="o">:</span> <span class="mi">21</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2>
+<a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies</h2>
+
+<p>This plugin uses Sergi Mansilla's <a href="https://github.com/sergi/jsftp">jsftp</a> node.js module.</p>
 
 <h2>
 <a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h2>
