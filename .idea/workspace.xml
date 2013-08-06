@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d4d56607-71e4-4058-852d-efd7dee7dd3b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="grunt-ftp-push.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -39,7 +38,7 @@
       <file leaf-file-name="package.json" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/package.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="41" column="8" selection-start="906" selection-end="906" vertical-scroll-proportion="0.87664473">
+            <state line="3" column="19" selection-start="104" selection-end="104" vertical-scroll-proportion="0.07401316">
               <folding />
             </state>
           </provider>
@@ -338,7 +337,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="8" selection-start="906" selection-end="906" vertical-scroll-proportion="0.87664473">
+        <state line="3" column="19" selection-start="104" selection-end="104" vertical-scroll-proportion="0.07401316">
           <folding />
         </state>
       </provider>
