@@ -19,7 +19,19 @@ module.exports = function(grunt) {
       done;
 
   var getAuthInfo = function(authKey) {
-    return JSON.parse(grunt.file.read('.ftpauth'))[authKey];
+    if(grunt.file.exists('.ftpauth'))
+      return JSON.parse(grunt.file.read('.ftpauth'))[authKey];
+    else if (options.username && options.password){
+      return {
+        username: options.username,
+        password: options.password
+      };
+    } else {
+      return {
+        username: null,
+        password: null
+      }; // Will Force the User to Use Anonymous Login
+    }
   };
 
   var _recursiveUploads = function(file,terminator) {
