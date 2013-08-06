@@ -17,8 +17,7 @@ module.exports = function(grunt) {
     ftp_push: {
       default: {
         options: {
-          username: "{{Username}}",
-          password: "{{Password}}",
+          authKey: "serverA",
           host: "sample.server.com",
           dest: "/html/test/",
           port: 21

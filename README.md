@@ -37,17 +37,11 @@ grunt.initConfig({
 
 ### Options
 
-#### Options.Username
+#### authKey
 Type: `String` 
 Default: `None`
 
-Username for logging into the FTP server.
-
-#### Password
-Type: `String` 
-Default: `None`
-
-Password for logging into the FTP server.
+Name of authKey that will be used for your credentials to access the FTP server.  This name should match the name of the credentials you want to use in the `.ftpauth` file.
 
 #### host
 Type: `String` 
@@ -69,6 +63,23 @@ Port for accessing the FTP server.
 
 ### Usage Examples
 
+#### Sample .ftpauth file
+
+This file should be named `.ftpauth` and be in the same directory as your `Gruntfile.js`.  It is a JSON object with an "authKey" that has a username and password for it's value. Use the following as a guide for setting up your file.
+
+```js
+{
+	"serverA":{
+		"username":"myUserName@gmail.com",
+		"password":"password123456"
+	},
+	"serverB":{
+  		"username":"myOtherUsername@gmail.com",
+  		"password":"12345Pass"
+  	}
+}
+```
+
 #### Default Options
 In this example, the default options are used to set up the necessary components of pushing files to an FTP server. This is meant to be very basic, the files you specify in `files` will be pushed one by one to `host + dest`.
 
@@ -76,8 +87,7 @@ In this example, the default options are used to set up the necessary components
 grunt.initConfig({
   ftp_push: {
         options: {
-          username: "{{Username}}",
-          password: "{{Password}}",
+          authKey: "serverA",
           host: "sample.server.com",
           dest: "/html/test/",
           port: 21
