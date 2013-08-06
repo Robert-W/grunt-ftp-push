@@ -99,6 +99,30 @@ grunt.initConfig({
 })
 ```
 
+#### Optional Options
+For your options object which normally looks like this:
+```js
+options: {
+	authKey: "serverA",
+    host: "sample.server.com",
+    dest: "/html/test/",
+    port: 21
+},
+```
+You can also not create an .ftpauth file if you choose and pass the username and password in this way: 
+```js
+options: {
+	username: "myUsername",
+	password: "myPassword",
+    host: "sample.server.com",
+    dest: "/html/test/",
+    port: 21
+}
+```
+## Dependencies
+
+This plugin uses Sergi Mansilla's <a href="https://github.com/sergi/jsftp">jsftp</a> node.js module.
+
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
