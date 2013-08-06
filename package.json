@@ -34,7 +34,11 @@
   "peerDependencies": {
     "grunt": "~0.4.1"
   },
+  "dependencies": {
+    "jsftp": "~1.1.0"
+  },
   "keywords": [
-    "gruntplugin"
+    "gruntplugin",
+    "ftp"
   ]
 }
