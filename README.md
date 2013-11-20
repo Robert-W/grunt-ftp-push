@@ -25,11 +25,13 @@ In your project's Gruntfile, add a section named `ftp_push` to the data object p
 ```js
 grunt.initConfig({
   ftp_push: {
-    options: {
-      // Task-specific options go here.
-    },
-    files: {
-      // Target-specific file lists.
+    your_target: {
+      options: {
+        // Task-specific options go here.
+      },
+      files: {
+        // Target-specific file lists.
+      }
     }
   }
 })
@@ -86,16 +88,18 @@ In this example, the default options are used to set up the necessary components
 ```js
 grunt.initConfig({
   ftp_push: {
-        options: {
-          authKey: "serverA",
-          host: "sample.server.com",
-          dest: "/html/test/",
-          port: 21
-        },
-        files: [ // Enable Dynamic Expansion, Src matches are relative to this path, Actual Pattern(s) to match
-          {expand: true,cwd: 'test',src: ['**/*']}
-        ]
-      }
+    your_target: {
+      options: {
+        authKey: "serverA",
+        host: "sample.server.com",
+        dest: "/html/test/",
+        port: 21
+      },
+      files: [ // Enable Dynamic Expansion, Src matches are relative to this path, Actual Pattern(s) to match
+        {expand: true,cwd: 'test',src: ['**/*']}
+      ]
+    }
+  }
 })
 ```
 
