@@ -1,6 +1,7 @@
 # grunt-ftp-push
 
-> Deploy your files to a FTP server,
+> Deploy your files to a FTP server
+> Notice: Currently SFTP is not supported
 
 ## Getting Started
 This plugin requires Grunt `~0.4.1`
@@ -129,6 +130,7 @@ This plugin uses Sergi Mansilla's <a href="https://github.com/sergi/jsftp">jsftp
 
 ## Coming Soon
 Adding in list of files to exclude from the upload.
+Possibly adding in support for SFTP
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
