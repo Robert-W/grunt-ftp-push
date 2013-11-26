@@ -5,11 +5,9 @@
  * Copyright (c) 2013 Robert Winterbottom
  * Licensed under the MIT license.
  */
-
-'use strict';
-
 module.exports = function(grunt) {
-
+	'use strict';
+	
   var Ftp = require('jsftp'),
       filepaths = [],
       currentFileIndex = 0,
