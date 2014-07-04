@@ -25,7 +25,26 @@ module.exports = function(grunt) {
         files: [ // Enable Dynamic Expansion, Src matches are relative to this path, Actual Pattern(s) to match
           {expand: true,cwd: 'test',src: ['**/*']}
         ]
+      },
+
+      test: {
+        options: {
+          authKey: "staging",
+          host: "staging.blueraster.com",
+          dest: "/test/",
+          port: 21
+        },
+        files: [ // Enable Dynamic Expansion, Src matches are relative to this path, Actual Pattern(s) to match
+          {
+            expand: true,
+            cwd: '.',
+            src: [
+              '.gitignore'
+            ]
+          }
+        ]
       }
+
     }
 
 
@@ -36,6 +55,6 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['ftp_push']);
+  grunt.registerTask('test', ['ftp_push:test']);
 
 };
