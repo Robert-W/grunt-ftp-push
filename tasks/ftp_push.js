@@ -7,19 +7,20 @@
  */
 module.exports = function(grunt) {
 	'use strict';
-	
+
   var Ftp = require('jsftp'),
-      filepaths = [],
-      currentFileIndex = 0,
-      length,
-      options,
+      filePaths = [],
+      failCount = 0,
       ftpServer,
+      tempFile,
+      options,
+      length,
       done;
 
   var getAuthInfo = function(authKey) {
-    if(grunt.file.exists('.ftpauth'))
+    if(grunt.file.exists('.ftpauth')) {
       return JSON.parse(grunt.file.read('.ftpauth'))[authKey];
-    else if (options.username && options.password){
+    } else if (options.username && options.password){
       return {
         username: options.username,
         password: options.password
@@ -32,62 +33,84 @@ module.exports = function(grunt) {
     }
   };
 
-  var _recursiveUploads = function(file,terminator) {
-    if(grunt.file.isDir(file)){
-      var dirName = options.dest+file.split("/").slice(1).join("/");
-      ftpServer.raw.mkd(dirName,function(err, data) {
+  var uploadFiles = function(files) {
+    var file = tempFile = files.pop(),
+      path = options.dest + ((file.search("/") > -1) ? file.split("/").slice(1).join("/") : file);
+
+    if (grunt.file.isDir(file)) {
+      ftpServer.raw.mkd(path,function(err, data) {
         if (err){
-          if(err.code !== 550) // Directory Already Created
+          if(err.code !== 550) { // Directory Already Created
             throw err;
+          }
         }
-        currentFileIndex++;
-        if(currentFileIndex === length){
-          terminator = true;
-          ftpServer.raw.quit(function(err, res) {
-            if (err) {
-              grunt.log.error(err);
-              done();
-            }
-            grunt.log.ok("FTP connection closed!");
-            done();
-          });
-        }
-        if(!terminator)
-          _recursiveUploads(filepaths[currentFileIndex],terminator);
+        // Set temp to undefined so that if there is a disconnect, it does not
+        // push this file back into the queue and upload it twice
+        tempFile = undefined;
+        checkForMore(files);
       });
     } else {
-      var filename = file.split("/");
-      filename = filename.slice(1).join("/");
-      var destination = options.dest + filename;
-      ftpServer.put(grunt.file.read(file,{encoding:null}),destination,function(err){
+      ftpServer.put(grunt.file.read(file,{encoding:null}),path,function(err){
         if(err){
-          grunt.log.error(filepaths[currentFileIndex]+" transfer failed.");
-          currentFileIndex++;
+          grunt.log.error(path+" transfer failed because " + err);
         } else {
-          grunt.log.ok(filepaths[currentFileIndex]+" transferred successfully.");
-          currentFileIndex++;
+          // Set temp to undefined so that if there is a disconnect, it does not
+          // push this file back into the queue and upload it twice
+          tempFile = undefined;
+          grunt.log.ok(path+" transferred successfully.");
         }
-        if(currentFileIndex === length){
-          terminator = true;
-          ftpServer.raw.quit(function(err, res) {
-            if (err) {
-              grunt.log.error(err);
-              done();
-            }
-            grunt.log.ok("FTP connection closed!");
-            done();
-          });
-        }
-        if(!terminator)
-          _recursiveUploads(filepaths[currentFileIndex],terminator);
+        checkForMore(files);
       });
     }
+  };
+
+  var checkForMore = function (files) {
+    if (files.length > 0) {
+      uploadFiles(files);
+    } else {
+      // Close the connection when completed
+      closeConnection();
+    }
+  };
+
+  var closeConnection = function () {
+    ftpServer.raw.quit(function(err, res) {
+      if (err) {
+        grunt.log.error(err);
+        done();
+      }
+      grunt.log.ok("FTP connection closed!");
+      done();
+    });
+  };
+
+  var uploadReconnect = function(files) {
+
+    if (failCount !== options.reconnectLimit) {
+      try {
+        uploadFiles(files);
+      } catch (err) {
+        grunt.log.error("There was an error uploading your files. Attempting to upload again.");
+        failCount += 1;
+        if (tempFile) {
+          files.push(tempFile);
+        }
+        uploadReconnect(files);
+      }
+    } else {
+      grunt.log.error("Check your connection.  FTP is having trouble connecting or staying connected.");
+      closeConnection();
+    }
+
   };
 
   grunt.registerMultiTask('ftp_push', 'Deploy files to a FTP server.', function() {
 
     // Merge task-specific and/or target-specific options with these defaults.
-    options = this.options();
+    options = this.options({
+      autoReconnect: true,
+      reconnectLimit: 3
+    });
     // Tell Grunt not to finish until my async methods are completed, calling done() to finish
     done = this.async();
 
@@ -98,8 +121,7 @@ module.exports = function(grunt) {
 
     // Iterate over all specified file groups.
     this.files.forEach(function(f) {
-      // Concat specified files.
-      var src = f.src.filter(function(filepath) {
+      f.src.filter(function(filepath) {
         // Warn on and remove invalid source files (if nonull was set).
         if (!grunt.file.exists(filepath)) {
           grunt.log.warn('Source file "' + filepath + '" not found.');
@@ -108,12 +130,12 @@ module.exports = function(grunt) {
           return true;
         }
       }).map(function(filepath) {
-        filepaths.push(filepath);
+        filePaths.push(filepath);
       });
-
     });
 
-    length = filepaths.length;
+
+    length = filePaths.length;
 
     if(length < 1){
       grunt.log.error("No Files Found to Transfer.");
@@ -123,11 +145,13 @@ module.exports = function(grunt) {
     var key = getAuthInfo(options.authKey);
 
     ftpServer.auth(key.username,key.password,function(err, res) {
-      if (err) throw err;
+      if (err) { throw err; }
       grunt.log.ok(key.username + " successfully authenticated!");
-
-      _recursiveUploads(filepaths[currentFileIndex],false);
-
+      // if (options.autoReconnect) {
+      //   uploadReconnect(filePaths);
+      // } else {
+        uploadFiles(filePaths);
+      //}
     });
 
   });
