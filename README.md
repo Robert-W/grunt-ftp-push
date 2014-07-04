@@ -130,10 +130,14 @@ This plugin uses Sergi Mansilla's <a href="https://github.com/sergi/jsftp">jsftp
 
 ## Coming Soon
 Adding in list of files to exclude from the upload.<br>
+Updating jsftp to version 1.3.0<br>
+Ability to push to multiple destinations with different sets of files in one target<br>
 Possibly adding in support for SFTP
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-_(Nothing yet)_
+<ul>
+<li>2014/07/03 - v 0.2.0 &nbsp;<a href='https://github.com/Robert-W/grunt-ftp-push/issues/6' target='_blank'>#6</a>&nbsp; Fixed issue with pushing files from root directory when cwd is set to '.' or './'</li>
+</ul>
