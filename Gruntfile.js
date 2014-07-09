@@ -30,8 +30,8 @@ module.exports = function(grunt) {
       test: {
         options: {
           authKey: "serverB",
-          host: "sample.serverB.com",
-          dest: "/test/",
+          host: "sample.hello.com",
+          dest: "test/html/",
           port: 21
         },
         files: [ // Enable Dynamic Expansion, Src matches are relative to this path, Actual Pattern(s) to match
@@ -39,7 +39,7 @@ module.exports = function(grunt) {
             expand: true,
             cwd: '.',
             src: [
-              '.gitignore'
+              'README.md'
             ]
           }
         ]
