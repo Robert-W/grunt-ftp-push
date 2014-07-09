@@ -104,6 +104,61 @@ module.exports = function(grunt) {
 
   };
 
+  var createDestinationIfNotExist = function (callback) {    
+
+    var count;
+
+    if (options.dest.search("/") < 0) {
+      options.dest += "/";
+    }
+
+    count = options.dest.match(/\//g).length;
+
+    // If the array contains a long path, make sure all the directories are created
+    // else, just make sure the one directory is created
+    if (count > 1) {
+      addMultipleDirectoriesFromDestination(count, callback);
+    } else {      
+      ftpServer.raw.mkd(options.dest, function (err, data) {
+        grunt.log.ok(options.dest + " directory created successfully.");
+        callback(err, data);
+      });
+    }
+
+  };
+
+  var addMultipleDirectoriesFromDestination = function (count, callback) {
+
+    var partials = [],
+        regex = /\//g,
+        index = 0,
+        hasMoreDirs,
+        match;
+
+    while ((match = regex.exec(options.dest)) !== null) {
+      partials.push(options.dest.slice(0, match.index));
+    }
+
+    hasMoreDirs = function (err, data) {
+      if (err){
+        if(err.code !== 550) { // Directory Already Created
+          throw err;
+        }
+      } else {
+        grunt.log.ok(partials[index] + " directory created successfully.");
+      }
+
+      index++;
+      if (index < partials.length) {
+        ftpServer.raw.mkd(partials[index], hasMoreDirs);
+      } else {
+        callback();
+      }
+    };
+    ftpServer.raw.mkd(partials[index], hasMoreDirs);
+
+  };
+
   grunt.registerMultiTask('ftp_push', 'Deploy files to a FTP server.', function() {
 
     // Merge task-specific and/or target-specific options with these defaults.
@@ -147,11 +202,18 @@ module.exports = function(grunt) {
     ftpServer.auth(key.username,key.password,function(err, res) {
       if (err) { throw err; }
       grunt.log.ok(key.username + " successfully authenticated!");
-      // if (options.autoReconnect) {
-      //   uploadReconnect(filePaths);
-      // } else {
-        uploadFiles(filePaths);
-      //}
+      createDestinationIfNotExist(function (err, data) {
+        if (err){
+          if(err.code !== 550) { // Directory Already Created
+            throw err;
+          }
+        }
+        // if (options.autoReconnect) {
+        //   uploadReconnect(filePaths);
+        // } else {
+          uploadFiles(filePaths);
+        //}
+      });
     });
 
   });
