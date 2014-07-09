@@ -30,8 +30,8 @@ module.exports = function(grunt) {
       test: {
         options: {
           authKey: "serverB",
-          host: "sample.hello.com",
-          dest: "test/html/",
+          host: "server.sample.com",
+          dest: "test/html",
           port: 21
         },
         files: [ // Enable Dynamic Expansion, Src matches are relative to this path, Actual Pattern(s) to match

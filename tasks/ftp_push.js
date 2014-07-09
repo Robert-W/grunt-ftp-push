@@ -108,7 +108,7 @@ module.exports = function(grunt) {
 
     var count;
 
-    if (options.dest.search("/") < 0) {
+    if (options.dest.charAt(options.dest.length -1) !== "/") {
       options.dest += "/";
     }
 
