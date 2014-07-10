@@ -195,7 +195,7 @@ module.exports = function(grunt) {
     if(length < 1){
       grunt.log.error("No Files Found to Transfer.");
       done();
-    }
+    } 
 
     var key = getAuthInfo(options.authKey);
 
@@ -208,6 +208,11 @@ module.exports = function(grunt) {
             throw err;
           }
         }
+
+        // Reverse filePaths array since I am popping files off, need them popped off in the correct order
+        // to prevent errors pushing files to directories that dont exist
+        filePaths.reverse();
+
         // if (options.autoReconnect) {
         //   uploadReconnect(filePaths);
         // } else {
