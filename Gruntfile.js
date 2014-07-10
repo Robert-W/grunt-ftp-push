@@ -6,10 +6,8 @@
  * Licensed under the MIT license.
  */
 
-'use strict';
-
 module.exports = function(grunt) {
-
+  'use strict';
   // Project configuration.
   grunt.initConfig({
 
@@ -25,24 +23,6 @@ module.exports = function(grunt) {
         files: [ // Enable Dynamic Expansion, Src matches are relative to this path, Actual Pattern(s) to match
           {expand: true,cwd: 'test',src: ['**/*']}
         ]
-      },
-
-      test: {
-        options: {
-          authKey: "serverB",
-          host: "server.sample.com",
-          dest: "test/html",
-          port: 21
-        },
-        files: [ // Enable Dynamic Expansion, Src matches are relative to this path, Actual Pattern(s) to match
-          {
-            expand: true,
-            cwd: '.',
-            src: [
-              'README.md'
-            ]
-          }
-        ]
       }
 
     }
@@ -55,6 +35,6 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['ftp_push:test']);
+  grunt.registerTask('test', ['ftp_push']);
 
 };
