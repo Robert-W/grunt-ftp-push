@@ -139,5 +139,8 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 <ul>
+<li>2014/07/03 - v 0.2.1 &nbsp;<a href='https://github.com/Robert-W/grunt-ftp-push/issues/7' target='_blank'>#7</a>&nbsp;
+&nbsp;<a href='https://github.com/Robert-W/grunt-ftp-push/issues/9' target='_blank'>#9</a>&nbsp; 
+Fixed issue latest patch not correctly creating directories in provided filepaths from patterns. As well as 7 & 9</li>
 <li>2014/07/03 - v 0.2.0 &nbsp;<a href='https://github.com/Robert-W/grunt-ftp-push/issues/6' target='_blank'>#6</a>&nbsp; Fixed issue with pushing files from root directory when cwd is set to '.' or './'</li>
 </ul>
