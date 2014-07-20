@@ -114,10 +114,10 @@ This file should be named `.ftpauth` and be in the same directory as your `Grunt
 ```
 
 #### Required Options
-The only option that has a default is the port, which is 21, currently the `host` and `dest` options are required for this plugin to function correctly.  If any of the required options are omitted, the plugin will abort with a warning informing you that you did not specify all the necessary requirements.
+The only option that has a default is the port, which is 21.  Currently the `host` and `dest` options are the only two required for this plugin to function correctly.  If any of the required options are omitted, the plugin will abort with a warning informing you that you did not specify all the necessary requirements.
 
 #### Optional Options
-In your options, You may opt to not set up an .ftpauth file and have an authKey present.  However you will probably then need to specify the username and password in the options object instead.  If you don't, the plugin will attempt to use an anonymous login.
+In your options, you may choose not to set up an .ftpauth file and not have an authKey present in your options.  You will probably then need to specify the username and password in the options object instead.  If you don't, the plugin will attempt to use an anonymous login.
 
 Specifying the username and password within the options object would look like the following: 
 ```js
