@@ -36,7 +36,10 @@ module.exports = function (grunt) {
           return true;
         }
       }).map(function(filepath) {
-        pathsForFiles.push(filepath);
+        pathsForFiles.push({
+          path: filepath,
+          cwd: f.orig.cwd
+        });
       });
     });
     return pathsForFiles.reverse();
@@ -116,23 +119,26 @@ module.exports = function (grunt) {
         return;// We are completed, close connection and end the program
       }
       // Pop a file, file cannot start with a /
-      var file = paths.pop(),
-          fullPath = correctedDestination + ((file.charAt(0) === "/") ? file.slice(1) : file);
+      var fileObject = paths.pop(),
+          file = fileObject.path,
+          cwd = fileObject.cwd,
+          tempPath = file.replace(cwd, ''),
+          destPath = correctedDestination + (tempPath.charAt(0) === "/" ? tempPath.slice(1) : tempPath);
       // If directory, create it and continue processing
       if (grunt.file.isDir(file)) {
-        ftpServer.raw.mkd(fullPath, function (err, data) {
+        ftpServer.raw.mkd(destPath, function (err, data) {
           if (err){
-            if(err.code !== 550) { throw err; } // Throw error as directory must be added successfully to continue
+            if (err.code !== 550) { throw err; } // Directory Already Created
           }
-          grunt.log.ok(fullPath + " directory created successfully.");
+          grunt.log.ok(destPath + " directory created successfully.");
           processPaths(); // Continue Processing
         });
       } else {        
-        ftpServer.put(grunt.file.read(file,{encoding:null}), fullPath, function (err) {
+        ftpServer.put(grunt.file.read(file,{encoding:null}), destPath, function (err) {
           if (err) { 
-            grunt.log.warn(fullPath + " failed to transfer because " + err); // Notify User file could not be pushed
+            grunt.log.warn(destPath + " failed to transfer because " + err); // Notify User file could not be pushed
           } else {
-            grunt.log.ok(fullPath + " transferred successfully.");
+            grunt.log.ok(destPath + " transferred successfully.");
           }
           processPaths(); // Continue Processing
         });
