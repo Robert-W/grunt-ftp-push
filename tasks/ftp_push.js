@@ -80,8 +80,11 @@ module.exports = function (grunt) {
       destination += "/";
     }
     // Create an array of directories that I will need to create
-    while ((match = regex.exec(destination)) !== null) {
-      partials.push(destination.slice(0, match.index));
+    // If the destination is / ignore it, else process it
+    if (destination.length !== 1) {
+      while ((match = regex.exec(destination)) !== null) {
+        partials.push(destination.slice(0, match.index));
+      }
     }
     /**
      * Helper recursive function to push all directories that are present in partials array
@@ -103,8 +106,13 @@ module.exports = function (grunt) {
         callback(); // Call the callback to continue processing
       }
     }
+
     // Start making directories
-    ftpServer.raw.mkd(partials[index], processPartials);
+    if (partials.length > 0) {
+      ftpServer.raw.mkd(partials[index], processPartials);
+    } else {
+      callback();
+    }
   }
   /**
    * Upload all files that are present in the paths array
@@ -118,12 +126,13 @@ module.exports = function (grunt) {
         closeConnection();
         return;// We are completed, close connection and end the program
       }
-      // Pop a file, file cannot start with a /
+      // Pop a file, file cannot start with a /, remove cwd from path unless it's . or ./
       var fileObject = paths.pop(),
           file = fileObject.path,
           cwd = fileObject.cwd,
-          tempPath = file.replace(cwd, ''),
+          tempPath = ((cwd === '.' || cwd === './') ? file : file.replace(cwd, '')),
           destPath = correctedDestination + (tempPath.charAt(0) === "/" ? tempPath.slice(1) : tempPath);
+
       // If directory, create it and continue processing
       if (grunt.file.isDir(file)) {
         ftpServer.raw.mkd(destPath, function (err, data) {
