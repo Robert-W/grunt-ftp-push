@@ -134,8 +134,10 @@ options: {
 This plugin uses Sergi Mansilla's <a href="https://github.com/sergi/jsftp">jsftp</a> node.js module.
 
 ## Coming Soon
+Adding in Unit Tests for my sanity<br>
 Adding in list of files to exclude from the upload.<br>
 Ability to push to multiple destinations with different sets of files in one target<br>
+More Examples in the README to show different ways of using it<br>
 Possibly adding in support for SFTP
 
 ## Contributing
@@ -143,6 +145,8 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 <ul>
+<li>2014/07/24 - v 0.2.4  Fixed issue introduced with latest fix, added fix to remove cwd from path of file being pushed so they are pushed to the expected location.  Other minor fixes and enhancements.
+</li>
 <li>2014/07/20 - v 0.2.2 
 <ul>
 <li>Fixes for getting credentials correctly.</li><li>Creating directories correctly from dest if they don't exist.</li><li>Handling '/' appropriately in all cases.</li><li>Better error handling, restructured code, and more detailed comments.</li><li>Upgraded to latest jsftp(v 1.3.1). <a target='_blank' href='https://github.com/Robert-W/grunt-ftp-push/issues/8'>#8</a></li><li>Updated documentation for username and password.</li>
