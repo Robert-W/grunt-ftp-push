@@ -133,7 +133,7 @@ module.exports = function (grunt) {
           cwd = fileObject.cwd,
           tempPath = ((cwd === '.' || cwd === './') ? file : file.replace(cwd, '')),
           tempDestPath = correctedDestination + (tempPath.charAt(0) === "/" ? tempPath.slice(1) : tempPath),
-          destPath = fileObject.dest ? correctedDestination + fileObject.dest : tempDestPath;
+          destPath = fileObject.dest ? correctedDestination + fileObject.dest + (tempPath.charAt(0) === "/" ? tempPath.slice(1) : tempPath) : tempDestPath;
 
       // If directory, create it and continue processing
       if (grunt.file.isDir(file)) {
