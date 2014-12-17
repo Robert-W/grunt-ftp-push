@@ -118,6 +118,9 @@ module.exports = function (grunt) {
    * Upload all files that are present in the paths array
    */
   function uploadFiles(paths) {
+    // Fire keep alive to ftp server every 60 seconds to avoid session timeouts.
+    ftpServer.keepAlive(60000);
+   
     /**
      * Helper recursive function to process all available paths
      */
