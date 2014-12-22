@@ -21,7 +21,7 @@ module.exports = function (grunt) {
     return (options.host && options.dest);
   }
   /**
-   * @returns {Array} returns string filepaths that are relative to options.dest,
+   * @return {Array} returns string filepaths that are relative to options.dest,
    * they are reversed after filtering and mapping so they can be created in the correct order
    */
   function getFilePaths(filePaths) {
@@ -45,7 +45,7 @@ module.exports = function (grunt) {
     return pathsForFiles.reverse();
   }
   /**
-   * @returns {Object} returns an object containing a username and password
+   * @return {Object} returns an object containing a username and password
    */
   function getCredentials() {
     if (options.authKey && grunt.file.exists('.ftpauth')) {
@@ -119,8 +119,7 @@ module.exports = function (grunt) {
    */
   function uploadFiles(paths) {
     // Fire keep alive to ftp server every 60 seconds to avoid session timeouts.
-    ftpServer.keepAlive(60000);
-   
+    ftpServer.keepAlive(options.keepAlive);
     /**
      * Helper recursive function to process all available paths
      */
@@ -141,9 +140,10 @@ module.exports = function (grunt) {
         ftpServer.raw.mkd(destPath, function (err, data) {
           if (err){
             if (err.code !== 550) { throw err; } // Directory Already Created
+          } else {
+            grunt.log.ok(destPath + " directory created successfully.");
+            processPaths(); // Continue Processing
           }
-          grunt.log.ok(destPath + " directory created successfully.");
-          processPaths(); // Continue Processing
         });
       } else {        
         ftpServer.put(grunt.file.read(file,{encoding:null}), destPath, function (err) {
@@ -151,8 +151,8 @@ module.exports = function (grunt) {
             grunt.log.warn(destPath + " failed to transfer because " + err); // Notify User file could not be pushed
           } else {
             grunt.log.ok(destPath + " transferred successfully.");
+            processPaths(); // Continue Processing
           }
-          processPaths(); // Continue Processing
         });
       }
     }    
@@ -190,7 +190,8 @@ module.exports = function (grunt) {
     // Merge task-specific and/or target-specific options with these defaults.
     options = this.options({
       autoReconnect: true,
-      reconnectLimit: 3
+      reconnectLimit: 3,
+      keepAlive: 60000
     });
 
     // Tell Grunt not to finish until my async methods are completed, calling done() to finish
