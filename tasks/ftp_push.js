@@ -9,7 +9,7 @@
 module.exports = function (grunt) {
   'use strict';
   var Ftp = require('jsftp'),
-      correctedDestination,
+      rootDestination,
       ftpServer,
       options,
       done;
@@ -19,6 +19,21 @@ module.exports = function (grunt) {
   function requirementsAreValid() {
     // host and dest are mandatory options
     return (options.host && options.dest);
+  }
+
+  /**
+  * @param {string} dest - path to directory
+  * @return {string} - Return dest with trailing slash if not present
+  */
+  function normalizeDir(dest) {
+    return (dest.charAt(dest.length - 1) !== '/' ? dest + '/' : dest);
+  }
+  /**
+  * @param {string} file - path to file
+  * @return {string} - Return file with initial slash removed
+  */
+  function normalizeFilename(file) {
+    return (file.charAt(0) === '/' ? file.slice(1) : file);
   }
   /**
    * @return {Array} returns string filepaths that are relative to options.dest,
@@ -68,25 +83,39 @@ module.exports = function (grunt) {
    * Passes an error to the callback if not able to complete its tasks
    * Creates all directories necessary so that files can be pushed to options.dest
    */
-  function createDirectoriesForDestination(callback) {
+  function createDirectoriesForDestination(fileObjects, callback) {
     // Destination needs to end with / and not begin with / for following code to push correctly
-    // Remove preceeding slash if present
-    var destination = (options.dest.charAt(0) === "/" ? options.dest.slice(1) : options.dest),
+    // Remove preceeding slash if present, just use normalizeFilename function, it will work for this
+    var destination = normalizeFilename(options.dest),
+        preparedDestination,
+        destinations = [],
         partials = [],
         regex = /\//g,
         index = 0,
         match;
-    // Add Trailing slash if not present
-    if (destination.charAt(destination.length - 1) !== "/") {
-      destination += "/";
-    }
+
+    destination = normalizeDir(destination);
+    destinations.push(destination);
+
+    // If there are other destinations specified in the dest obj of individual entries, add those here
+    // so they can be created before I push any files to the server
+    fileObjects.forEach(function (fileItem) {
+      if (fileItem.dest) {
+        // Prepare the destination, then push into array for processing
+        preparedDestination = destination + normalizeDir(fileItem.dest);
+        destinations.push(preparedDestination);
+      }
+    });
+
     // Create an array of directories that I will need to create
     // If the destination is / ignore it, else process it
-    if (destination.length !== 1) {
-      while ((match = regex.exec(destination)) !== null) {
-        partials.push(destination.slice(0, match.index));
+    destinations.forEach(function (directoryDest) {
+      if (directoryDest.length !== 1) {
+        while ((match = regex.exec(directoryDest)) !== null) {
+          partials.push(directoryDest.slice(0, match.index));
+        }
       }
-    }
+    });
     /**
      * Helper recursive function to push all directories that are present in partials array
      */
@@ -133,9 +162,22 @@ module.exports = function (grunt) {
       var fileObject = paths.pop(),
           file = fileObject.path,
           cwd = fileObject.cwd,
-          tempPath = ((cwd === '.' || cwd === './') ? file : file.replace(cwd, '')),
-          tempDestPath = correctedDestination + (tempPath.charAt(0) === "/" ? tempPath.slice(1) : tempPath),
-          destPath = fileObject.dest ? correctedDestination + fileObject.dest + (tempPath.charAt(0) === "/" ? tempPath.slice(1) : tempPath) : tempDestPath;
+          relativeDest,
+          destPath;
+
+      // Guarantee the path is pushed to the intended location
+      // Remove cwd from path unless its . or ./
+      destPath = ((cwd === '.' || cwd === './') ? file : file.replace(cwd, ''));
+      // Remove / from start of file if present
+      destPath = normalizeFilename(destPath);
+      // file could have optional destination different from default, if so, add it here
+      if (fileObject.dest) {
+        // Make sure relative destination ends in /
+        relativeDest = normalizeDir(fileObject.dest);
+        destPath = rootDestination + relativeDest + destPath;
+      } else {
+        destPath = rootDestination + destPath;
+      }
 
       // If directory, create it and continue processing
       if (grunt.file.isDir(file)) {
@@ -144,8 +186,8 @@ module.exports = function (grunt) {
             if (err.code !== 550) { throw err; } // Directory Already Created
           } else {
             grunt.log.ok(destPath + " directory created successfully.");
-            processPaths(); // Continue Processing
           }
+          processPaths(); // Continue Processing
         });
       } else {        
         ftpServer.put(grunt.file.read(file,{encoding:null}), destPath, function (err) {
@@ -153,8 +195,8 @@ module.exports = function (grunt) {
             grunt.log.warn(destPath + " failed to transfer because " + err); // Notify User file could not be pushed
           } else {
             grunt.log.ok(destPath + " transferred successfully.");
-            processPaths(); // Continue Processing
           }
+          processPaths(); // Continue Processing
         });
       }
     }    
@@ -224,9 +266,9 @@ module.exports = function (grunt) {
       if (err) { throw err; }
       grunt.log.ok(credentials.username + " successfully authenticated!");
       // Create directories specified in options.dest
-      createDirectoriesForDestination(function () {
+      createDirectoriesForDestination(paths, function () {
         // Normalize destionation to be used in uploadFiles
-        correctedDestination = (options.dest.charAt(options.dest.length - 1) === "/" ? options.dest : options.dest += "/");
+        rootDestination = normalizeDir(options.dest);
         // Upload the files and close the connection on completion
         uploadFiles(paths);
       });

@@ -94,6 +94,13 @@ Required: false
 
 If no authKey and .ftpauth file is provided, you can specify password here.
 
+#### keepAlive
+Type: `Number`<br>
+Default: `60000`<br>
+Required: false
+
+Duration of JSFTP's keep alive to avoid session timeouts.
+
 ### Usage Examples
 
 #### Sample .ftpauth file
@@ -129,14 +136,20 @@ options: {
     port: 21
 }
 ```
+#### Extras
+You can now specify a destination inside your files objects like so: 
+```js 
+{expand: true,cwd: 'test',src: ['**/*']},
+{expand: true,cwd: 'tasks',src: ['**/*'], dest: 'tasks/' }
+```
+This will allow you to configure where you push your code in case you want to push to a diretory structure that is different from your local one.  The dest here <strong>MUST</strong> be relative to the root destination.
+
 ## Dependencies
 
 This plugin uses Sergi Mansilla's <a href="https://github.com/sergi/jsftp">jsftp</a> node.js module.
 
 ## Coming Soon
 Adding in Unit Tests for my sanity<br>
-Adding in list of files to exclude from the upload.<br>
-Ability to push to multiple destinations with different sets of files in one target<br>
 More Examples in the README to show different ways of using it<br>
 Possibly adding in support for SFTP
 
@@ -145,6 +158,8 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 <ul>
+<li>2014/12/22 - v 0.2.6  Added in option for keepAlive, default is 60000 (60 seconds), added in option for multiple destinations specified for each file object provided, if no dest is provided, it defaults to the dest specified in the options <a href='https://github.com/Robert-W/grunt-ftp-push/issues/4'>#4</a> & <a href='https://github.com/Robert-W/grunt-ftp-push/issues/13'>#13</a>.
+</li>
 <li>2014/07/24 - v 0.2.4  Fixed issue introduced with latest fix, added fix to remove cwd from path of file being pushed so they are pushed to the expected location.  Other minor fixes and enhancements.
 </li>
 <li>2014/07/20 - v 0.2.2 

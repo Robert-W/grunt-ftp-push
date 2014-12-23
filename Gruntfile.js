@@ -21,7 +21,8 @@ module.exports = function(grunt) {
           port: 21
         },
         files: [ // Enable Dynamic Expansion, Src matches are relative to this path, Actual Pattern(s) to match
-          {expand: true,cwd: 'test',src: ['**/*']}
+          {expand: true,cwd: 'test',src: ['**/*']},
+          {expand: true,cwd: 'tasks',src: ['**/*'], dest: 'tasks/' }
         ]
       }
 
