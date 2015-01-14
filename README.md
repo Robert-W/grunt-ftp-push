@@ -158,6 +158,8 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 <ul>
+<li>2015/01/13 - v 0.2.8  Patch for deeply nested files throwing errors
+</li>
 <li>2014/12/22 - v 0.2.6  Added in option for keepAlive, default is 60000 (60 seconds), added in option for multiple destinations specified for each file object provided, if no dest is provided, it defaults to the dest specified in the options <a href='https://github.com/Robert-W/grunt-ftp-push/issues/4'>#4</a> & <a href='https://github.com/Robert-W/grunt-ftp-push/issues/13'>#13</a>.
 </li>
 <li>2014/07/24 - v 0.2.4  Fixed issue introduced with latest fix, added fix to remove cwd from path of file being pushed so they are pushed to the expected location.  Other minor fixes and enhancements.
