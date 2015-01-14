@@ -36,7 +36,4 @@ module.exports = function(grunt) {
   // plugin's task(s), then test the result.
   grunt.registerTask('test', ['ftp_push']);
 
-
-  // grunt.registerTask('sample', ['ftp_push:sample']);
-
 };
