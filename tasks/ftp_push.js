@@ -104,18 +104,23 @@ module.exports = function (grunt) {
         // Prepare the destination, then push into array for processing
         preparedDestination = destination + normalizeDir(fileItem.dest);
         destinations.push(preparedDestination);
+      } else {
+        // Prepare the destination, then push into array for processing
+        preparedDestination = destination + normalizeDir(fileItem.path);
+        destinations.push(preparedDestination);
       }
     });
 
     // Create an array of directories that I will need to create
     // If the destination is / ignore it, else process it
+    // This takes foo/bar/baz and returns ['foo','foo/bar','foo/bar/baz']
     destinations.forEach(function (directoryDest) {
       if (directoryDest.length !== 1) {
         while ((match = regex.exec(directoryDest)) !== null) {
           partials.push(directoryDest.slice(0, match.index));
         }
       }
-    });
+    });    
     /**
      * Helper recursive function to push all directories that are present in partials array
      */
