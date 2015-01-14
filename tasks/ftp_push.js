@@ -106,7 +106,7 @@ module.exports = function (grunt) {
         destinations.push(preparedDestination);
       } else {
         // Prepare the destination, then push into array for processing
-        preparedDestination = destination + normalizeDir(fileItem.path);
+        preparedDestination = destination + fileItem.path;
         destinations.push(preparedDestination);
       }
     });
