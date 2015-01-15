@@ -24,7 +24,21 @@ module.exports = function(grunt) {
           {expand: true,cwd: 'test',src: ['**/*']},
           {expand: true,cwd: 'tasks',src: ['**/*'], dest: 'tasks/' }
         ]
+      },
+
+      sample: {
+        options: {
+          host: "sample.server.com",
+          dest: "/html/test/",
+          username: 'myUsername',
+          password: 'myPassword',
+          debug: true // Show JSFTP Debugging information
+        },
+        files: [
+          {expand: true,cwd: './',src: ['test/nested/another/sample.js']}
+        ]
       }
+
     }
 
   });
@@ -35,5 +49,6 @@ module.exports = function(grunt) {
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
   grunt.registerTask('test', ['ftp_push']);
+  grunt.registerTask('sample', ['ftp_push:sample']);
 
 };
