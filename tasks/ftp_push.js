@@ -256,7 +256,13 @@ module.exports = function (grunt) {
     // Create ftpServer Object
     ftpServer = new Ftp({
       host: options.host,
-      port: options.port || 21
+      port: options.port || 21,
+      debugMode: options.debug || false 
+    });
+
+    ftpServer.on('jsftp_debug', function(eventType, data) {
+      console.log('DEBUG: ', eventType);
+      console.log(JSON.stringify(data, null, 2));
     });
     
     // Get filePaths
