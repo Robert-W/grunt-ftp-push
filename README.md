@@ -101,6 +101,13 @@ Required: false
 
 Duration of JSFTP's keep alive to avoid session timeouts.
 
+#### debug
+Type: `Boolean`<br>
+Default: `false`<br>
+Required: false
+
+Enable debug mode for the JSFTP module to allow for verbose console messages.
+
 ### Usage Examples
 
 #### Sample .ftpauth file
@@ -121,7 +128,7 @@ This file should be named `.ftpauth` and be in the same directory as your `Grunt
 ```
 
 #### Required Options
-The only option that has a default is the port, which is 21.  Currently the `host` and `dest` options are the only two required for this plugin to function correctly.  If any of the required options are omitted, the plugin will abort with a warning informing you that you did not specify all the necessary requirements.
+Currently the `host` and `dest` options are the only two required for this plugin to function correctly.  If any of the required options are omitted, the plugin will abort with a warning informing you that you did not specify all the necessary requirements.
 
 #### Optional Options
 In your options, you may choose not to set up an .ftpauth file and not have an authKey present in your options.  You will probably then need to specify the username and password in the options object instead.  If you don't, the plugin will attempt to use an anonymous login.
@@ -158,6 +165,7 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 <ul>
+<li>2015/01/15 - v 0.3.2  Added debug option, updated readme, updated jsftp to 1.3.9</li>
 <li>2015/01/13 - v 0.3.0  Minor typo caused patch to work incorrectly</li>
 <li>2015/01/13 - v 0.2.8  Patch for deeply nested files throwing errors</li>
 <li>2014/12/22 - v 0.2.6  Added in option for keepAlive, default is 60000 (60 seconds), added in option for multiple destinations specified for each file object provided, if no dest is provided, it defaults to the dest specified in the options <a href='https://github.com/Robert-W/grunt-ftp-push/issues/4'>#4</a> & <a href='https://github.com/Robert-W/grunt-ftp-push/issues/13'>#13</a>.
