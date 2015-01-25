@@ -218,6 +218,7 @@ module.exports = function (grunt) {
           grunt.log.error(err);
           done(false);
         }
+        ftpServer.destroy();
         grunt.log.ok("FTP connection closed!");
         done();
       });
