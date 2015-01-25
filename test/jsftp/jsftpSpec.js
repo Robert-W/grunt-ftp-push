@@ -60,7 +60,6 @@ describe('Grunt Plugin - FTP Push - JSFTP test for troublesome hosts', function 
 		var remotePath = filename;
 		var buffer = grunt.file.read(localPath, { encoding: null });
 
-
 		function complete() {
 			if (--iterations > 0) {
 				run();
