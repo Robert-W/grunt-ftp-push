@@ -20,9 +20,11 @@ var defaults = {
 // How many times to push the file, OVH does not always fail on first push and seems to randomly fail after a few files
 // Increase this number to increase the number of iterations the test pushing and deleting a file
 // NOTE: You should see 2 successful assertions per iteration when tests are complete
-var iterations = 5;
+var iterations = 25;
 
 describe('Grunt Plugin - FTP Push - JSFTP test for troublesome hosts', function () {
+
+	jasmine.getEnv().defaultTimeoutInterval = 10000;
 
 	var grunt = require('grunt'),
 			Ftp = require('jsftp'),
