@@ -36,6 +36,19 @@ module.exports = function (grunt) {
     return (file.charAt(0) === '/' ? file.slice(1) : file);
   }
   /**
+   * @param {string} file - path to file
+   * @param {string} cwd - path to current working directory
+   * @return {string} - Return file without cwd if it starts with cwd, otherwise return the raw file.
+   */
+  function trimLeadingCwd(file, cwd) {
+    if ((typeof cwd === "string") && file.substr(0, cwd.length) === cwd)
+    {
+      file = file.substr(cwd.length);
+    }
+
+    return file;
+  }
+  /**
    * @return {Array} returns string filepaths that are relative to options.dest,
    * they are reversed after filtering and mapping so they can be created in the correct order
    */
@@ -106,7 +119,7 @@ module.exports = function (grunt) {
         destinations.push(preparedDestination);
       } else {
         // Prepare the destination, then push into array for processing
-        preparedDestination = destination + fileItem.path;
+        preparedDestination = destination + trimLeadingCwd(fileItem.path, fileItem.cwd);
         destinations.push(preparedDestination);
       }
     });
@@ -172,7 +185,7 @@ module.exports = function (grunt) {
 
       // Guarantee the path is pushed to the intended location
       // Remove cwd from path unless its . or ./
-      destPath = ((cwd === '.' || cwd === './') ? file : file.replace(cwd, ''));
+      destPath = trimLeadingCwd(file, cwd);
       // Remove / from start of file if present
       destPath = normalizeFilename(destPath);
       // file could have optional destination different from default, if so, add it here
