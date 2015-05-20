@@ -135,7 +135,14 @@ module.exports = function (grunt) {
           partials.push(directoryDest.slice(0, match.index));
         }
       }
-    });    
+    });
+
+    // De-duplicate partials
+    partials = partials.reduce(function(collector, element) {
+      if (collector.indexOf(element) < 0) collector.push(element);
+      return collector;
+    }, []);
+
     /**
      * Helper recursive function to push all directories that are present in partials array
      */
