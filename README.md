@@ -165,7 +165,8 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 <ul>
-<li>2015/05/20 - v 0.3.4  Merged fix for empty folder structure being created. <a href='https://github.com/Robert-W/grunt-ftp-push/pull/24'>#24</a></li>
+<li>2015/06/25 - v 0.3.6 Merged updates from <a href='https://github.com/Robert-W/grunt-ftp-push/pull/25'>#25 - De-Duplicate destination directories</a>.</li>
+<li>2015/05/20 - v 0.3.4 Merged fix for empty folder structure being created. <a href='https://github.com/Robert-W/grunt-ftp-push/pull/24'>#24</a></li>
 <li>2015/01/15 - v 0.3.2  Added debug option, updated readme, updated jsftp to 1.3.9</li>
 <li>2015/01/13 - v 0.3.0  Minor typo caused patch to work incorrectly</li>
 <li>2015/01/13 - v 0.2.8  Patch for deeply nested files throwing errors</li>
