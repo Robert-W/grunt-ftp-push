@@ -118,7 +118,7 @@ module.exports = function (grunt) {
     fileObjects.forEach(function (fileItem) {
       if (fileItem.dest) {
         // Prepare the destination, then push into array for processing
-        preparedDestination = destination + normalizeDir(fileItem.dest);
+        preparedDestination = destination + fileItem.relDest;
         destinations.push(preparedDestination);
       } else {
         // Prepare the destination, then push into array for processing
