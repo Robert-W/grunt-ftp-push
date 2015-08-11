@@ -69,7 +69,8 @@ module.exports = function (grunt) {
         pathsForFiles.push({
           path: filepath,
           cwd: f.orig.cwd,
-          dest: f.orig.dest
+          dest: f.orig.dest,
+          relDest: f.dest
         });
       });
     });
@@ -200,8 +201,7 @@ module.exports = function (grunt) {
       // file could have optional destination different from default, if so, add it here
       if (fileObject.dest) {
         // Make sure relative destination ends in /
-        relativeDest = normalizeDir(fileObject.dest);
-        destPath = rootDestination + relativeDest + destPath;
+        destPath = rootDestination + fileObject.relDest;
       } else {
         destPath = rootDestination + destPath;
       }
