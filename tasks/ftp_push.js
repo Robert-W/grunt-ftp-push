@@ -132,16 +132,13 @@ module.exports = function (grunt) {
     destinations.forEach(function (directoryDest) {
       if (directoryDest.length !== 1) {
         while ((match = regex.exec(directoryDest)) !== null) {
-          partials.push(directoryDest.slice(0, match.index));
+					    var part = directoryDest.slice(0, match.index);
+					    if (partials.indexOf(part) < 0) {
+				    		partials.push(part);
+    					}
         }
       }
     });
-
-    // De-duplicate partials
-    partials = partials.reduce(function(collector, element) {
-      if (collector.indexOf(element) < 0) collector.push(element);
-      return collector;
-    }, []);
 
     /**
      * Helper recursive function to push all directories that are present in partials array
