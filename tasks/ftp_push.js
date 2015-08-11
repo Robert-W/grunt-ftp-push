@@ -200,7 +200,6 @@ module.exports = function (grunt) {
       destPath = normalizeFilename(destPath);
       // file could have optional destination different from default, if so, add it here
       if (fileObject.dest) {
-        // Make sure relative destination ends in /
         destPath = rootDestination + fileObject.relDest;
       } else {
         destPath = rootDestination + destPath;
