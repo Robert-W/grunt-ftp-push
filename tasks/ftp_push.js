@@ -130,14 +130,14 @@ module.exports = function (grunt) {
     // If the destination is / ignore it, else process it
     // This takes foo/bar/baz and returns ['foo','foo/bar','foo/bar/baz']
     destinations.forEach(function (directoryDest) {
-      if (directoryDest.length !== 1) {
-        while ((match = regex.exec(directoryDest)) !== null) {
-					    var part = directoryDest.slice(0, match.index);
-					    if (partials.indexOf(part) < 0) {
-				    		partials.push(part);
-    					}
+        if (directoryDest.length !== 1) {
+            while ((match = regex.exec(directoryDest)) !== null) {
+                var part = directoryDest.slice(0, match.index);
+                if (partials.indexOf(part) < 0) {
+                    partials.push(part);
+                }
+            }
         }
-      }
     });
 
     /**
