@@ -109,7 +109,9 @@ module.exports = function (grunt) {
         index = 0,
         match;
 
-    destination = normalizeDir(destination);
+    if (destination !== "") {
+        destination = normalizeDir(destination);
+    }
     destinations.push(destination);
 
     // If there are other destinations specified in the dest obj of individual entries, add those here
