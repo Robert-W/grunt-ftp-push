@@ -1,0 +1,20 @@
+{
+  "env": {
+    "node": true
+  },
+  "globals": {
+    "console": true,
+    "require": true,
+    "it": true,
+    "xit": true,
+    "jest": true,
+    "spyOn": true,
+    "expect": true,
+    "describe": true,
+    "afterEach": true,
+    "beforeEach": true
+  },
+  "rules": {
+    "quotes": [1, "single", "avoid-escape"]
+  }
+}
