@@ -5,7 +5,7 @@
  * Copyright (c) 2013 Robert Winterbottom
  * Licensed under the MIT license.
  */
- 
+
 module.exports = function (grunt) {
   'use strict';
   var Ftp = require('jsftp'),
@@ -216,9 +216,9 @@ module.exports = function (grunt) {
           }
           processPaths(); // Continue Processing
         });
-      } else {        
+      } else {
         ftpServer.put(grunt.file.read(file,{encoding:null}), destPath, function (err) {
-          if (err) { 
+          if (err) {
             grunt.log.warn(destPath + " failed to transfer because " + err); // Notify User file could not be pushed
           } else {
             grunt.log.ok(destPath + " transferred successfully.");
@@ -226,7 +226,7 @@ module.exports = function (grunt) {
           processPaths(); // Continue Processing
         });
       }
-    }    
+    }
     // Start the process
     processPaths();
   }
@@ -280,25 +280,27 @@ module.exports = function (grunt) {
     ftpServer = new Ftp({
       host: options.host,
       port: options.port || 21,
-      debugMode: options.debug || false 
+      debugMode: options.debug || false
     });
 
     ftpServer.on('jsftp_debug', function(eventType, data) {
       console.log('DEBUG: ', eventType);
       console.log(JSON.stringify(data, null, 2));
     });
-    
+
     // Get filePaths
     paths = getFilePaths(this.files);
+
+    console.log(JSON.stringify(this.files));
 
     // Get Authentication Object
     credentials = getCredentials();
 
     // Authenticate yourself to the server
-    ftpServer.auth(credentials.username,credentials.password,function(err, res) {
+    ftpServer.auth(credentials.username, credentials.password, function(err) {
       // If error, throw fatal
       if (err) { throw err; }
-      grunt.log.ok(credentials.username + " successfully authenticated!");
+      grunt.log.ok(credentials.username + ' successfully authenticated!');
       // Create directories specified in options.dest
       createDirectoriesForDestination(paths, function () {
         // Normalize destionation to be used in uploadFiles
