@@ -130,18 +130,15 @@ module.exports = function (grunt) {
     // If the destination is / ignore it, else process it
     // This takes foo/bar/baz and returns ['foo','foo/bar','foo/bar/baz']
     destinations.forEach(function (directoryDest) {
-      if (directoryDest.length !== 1) {
-        while ((match = regex.exec(directoryDest)) !== null) {
-          partials.push(directoryDest.slice(0, match.index));
+        if (directoryDest.length !== 1) {
+            while ((match = regex.exec(directoryDest)) !== null) {
+                var part = directoryDest.slice(0, match.index);
+                if (partials.indexOf(part) < 0) {
+                    partials.push(part);
+                }
+            }
         }
-      }
     });
-
-    // De-duplicate partials
-    partials = partials.reduce(function(collector, element) {
-      if (collector.indexOf(element) < 0) collector.push(element);
-      return collector;
-    }, []);
 
     /**
      * Helper recursive function to push all directories that are present in partials array
