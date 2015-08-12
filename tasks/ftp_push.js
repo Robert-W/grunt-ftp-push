@@ -147,9 +147,11 @@ module.exports = function (grunt) {
      * Helper recursive function to push all directories that are present in partials array
      */
     function processPartials(err) {
-      // Throw fatal error if any error other then error then 550 is present, will need these directories created to continue
+      // Fail if any error other then error then 550 is present, will need these directories created to continue
       if (err) {
-        if (err.code !== 550) { throw err; } // Directory Already Created
+        if (err.code !== 550) {
+         grunt.fail.warn(err);
+        } // Directory Already Created
       } else {
         grunt.log.ok(partials[index] + " directory created successfully.");
       }
@@ -210,7 +212,9 @@ module.exports = function (grunt) {
       if (grunt.file.isDir(file)) {
         ftpServer.raw.mkd(destPath, function (err, data) {
           if (err){
-            if (err.code !== 550) { throw err; } // Directory Already Created
+            if (err.code !== 550) {
+             grunt.fail.warn(err);
+            } // Directory Already Created
           } else {
             grunt.log.ok(destPath + " directory created successfully.");
           }
@@ -296,8 +300,10 @@ module.exports = function (grunt) {
 
     // Authenticate yourself to the server
     ftpServer.auth(credentials.username,credentials.password,function(err, res) {
-      // If error, throw fatal
-      if (err) { throw err; }
+      // On error display a warning and abort Grunt immediately
+      if (err) {
+       grunt.fail.warn(err);
+      }
       grunt.log.ok(credentials.username + " successfully authenticated!");
       // Create directories specified in options.dest
       createDirectoriesForDestination(paths, function () {
