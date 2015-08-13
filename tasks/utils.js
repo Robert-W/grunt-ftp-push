@@ -60,22 +60,29 @@ var utils = {
   * @param {object[]} files - Array of file objects found by grunt
   * @return {object[]} returns a complete array of file path objects containing path and dest
   */
+
+  /*, Will go in main task file before calling this function, used to be part of it but am pulling it out
+  // First filter the files
+  file.src.filter(function (filepath) {
+    // If the file does not exist, remove it
+    if (!grunt.file.exists(path)) {
+      grunt.log.warn(messages.fileNotExist(path));
+      return false;
+    }
+    // If this path is to a file than keep it, else remove it
+    return grunt.file.isFile(path);
+  });
+  */
   getFilePaths: function (basePath, files) {
     var filePaths = [],
         destination;
 
+    // Files must be of type array, if not, return an empty array
+    if (Object.prototype.toString.call(files) !== '[object Array]') { return []; }
+
     files.forEach(function (file) {
-      // First filter the files
-      file.src.filter(function (filepath) {
-        // If the file does not exist, remove it
-        return true;
-        // if (!grunt.file.exists(path)) {
-        //   grunt.log.warn(messages.fileNotExist(path));
-        //   return false;
-        // }
-        // // If this path is to a file than keep it, else remove it
-        // return grunt.file.isFile(path);
-      }).forEach(function (filepath) {
+      // For each src file we have
+      file.src.forEach(function (filepath) {
         // Make sure the path is normalized
         filepath = path.normalize(filepath);
         // Trim the cwd from the path to prepare it for the destination
@@ -89,7 +96,7 @@ var utils = {
         // If a files destination is not in the array, add the file, this matched on destination
         if (!utils.arrayContainsFile(filePaths, destination))  {
           filePaths.push({
-            path: filepath,
+            src: filepath,
             dest: destination
           });
         }
@@ -102,7 +109,7 @@ var utils = {
   },
 
   /**
-  * @description Takes an array and a files destination path { path: '..', dest: '..' } and checks if the array contains it
+  * @description Takes an array and a files destination path { src: '..', dest: '..' } and checks if the array contains it
   * @param {object[]} files - Array of FilePath Objects
   * @param {string} destination - Destination of the File
   * @return {boolean} whether or not the array of files contained a file with the destination

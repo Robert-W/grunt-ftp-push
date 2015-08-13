@@ -42,15 +42,23 @@ describe('ftp_push - utils.trimCwd', function () {
 describe('ftp_push - utils.getFilePaths', function () {
   'use strict';
 
-  var results = utils.getFilePaths(fileMocks.test.base, fileMocks.test.files);
-  console.log(results);
-
   it('should return an array of normalized filepaths', function () {
-    expect(1).toEqual(1);
+    var results = utils.getFilePaths(fileMocks.test.base, fileMocks.test.files);
+    expect(results.length).toEqual(fileMocks.test.paths.length);
+    results.forEach(function (file) {
+      expect(file.src).toBeDefined();
+      expect(file.dest).toBeDefined();
+      expect(utils.arrayContainsFile(fileMocks.test.paths, file.dest)).toBeTruthy();
+    });
   });
 
   it('should accomodate relative destinations specified at the file level to be included in paths', function () {
-    expect(1).toEqual(1);
+    var originalFile = fileMocks.test.files[4];
+    var expected = fileMocks.test.paths[4];
+    var result = utils.getFilePaths(fileMocks.test.base, [originalFile])[0];
+
+    expect(result.dest).toEqual(expected.dest);
+    expect(result.dest).not.toEqual(expected.badPath);
   });
 
   it('should remove the current working directory from the filepath', function () {
@@ -58,10 +66,6 @@ describe('ftp_push - utils.getFilePaths', function () {
   });
 
   it('should not contain any duplicates', function () {
-    expect(1).toEqual(1);
-  });
-
-  it('should contain all of the expected files', function () {
     expect(1).toEqual(1);
   });
 
