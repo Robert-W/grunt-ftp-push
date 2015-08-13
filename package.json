@@ -39,6 +39,7 @@
     "grunt": "~0.4.1"
   },
   "dependencies": {
+    "eslint": "^1.1.0",
     "grunt": "^0.4.5",
     "jest-cli": "^0.4.18",
     "jsftp": "^1.5.2"

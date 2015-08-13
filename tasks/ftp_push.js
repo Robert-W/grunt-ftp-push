@@ -44,7 +44,7 @@ module.exports = function (grunt) {
    * @return {string} - Return file without cwd if it starts with cwd, otherwise return the raw file.
    */
   function trimLeadingCwd(file, cwd) {
-    if ((typeof cwd === "string") && file.substr(0, cwd.length) === cwd) {
+    if ((typeof cwd === 'string') && file.substr(0, cwd.length) === cwd) {
       file = file.substr(cwd.length);
     }
     return file;
@@ -87,7 +87,7 @@ module.exports = function (grunt) {
         password: options.password
       };
     } else {
-      grunt.log.warn("Attempting Anonymous Login");
+      grunt.log.warn('Attempting Anonymous Login');
       return {
         username: null,
         password: null
@@ -151,7 +151,7 @@ module.exports = function (grunt) {
       if (err) {
         if (err.code !== 550) { throw err; } // Directory Already Created
       } else {
-        grunt.log.ok(partials[index] + " directory created successfully.");
+        grunt.log.ok(partials[index] + ' directory created successfully.');
       }
 
       ++index;
@@ -212,16 +212,16 @@ module.exports = function (grunt) {
           if (err){
             if (err.code !== 550) { throw err; } // Directory Already Created
           } else {
-            grunt.log.ok(destPath + " directory created successfully.");
+            grunt.log.ok(destPath + ' directory created successfully.');
           }
           processPaths(); // Continue Processing
         });
       } else {
         ftpServer.put(grunt.file.read(file,{encoding:null}), destPath, function (err) {
           if (err) {
-            grunt.log.warn(destPath + " failed to transfer because " + err); // Notify User file could not be pushed
+            grunt.log.warn(destPath + ' failed to transfer because ' + err); // Notify User file could not be pushed
           } else {
-            grunt.log.ok(destPath + " transferred successfully.");
+            grunt.log.ok(destPath + ' transferred successfully.');
           }
           processPaths(); // Continue Processing
         });
@@ -241,7 +241,7 @@ module.exports = function (grunt) {
           done(false);
         }
         ftpServer.destroy();
-        grunt.log.ok("FTP connection closed!");
+        grunt.log.ok('FTP connection closed!');
         done();
       });
     } else if (errMsg) {
@@ -271,8 +271,8 @@ module.exports = function (grunt) {
 
     // Make Sure all requirements are valid
     if (!requirementsAreValid()) {
-      closeConnection("You did not specify all the requirements.  Please refer to the documentation at " +
-        "the following url for instructions. https://github.com/Robert-W/grunt-ftp-push#required-options");
+      closeConnection('You did not specify all the requirements.  Please refer to the documentation at ' +
+        'the following url for instructions. https://github.com/Robert-W/grunt-ftp-push#required-options');
       return;
     }
 
@@ -291,8 +291,6 @@ module.exports = function (grunt) {
     // Get filePaths
     paths = getFilePaths(this.files);
 
-    console.log(JSON.stringify(this.files));
-
     // Get Authentication Object
     credentials = getCredentials();
 
@@ -301,7 +299,7 @@ module.exports = function (grunt) {
       // If error, throw fatal
       if (err) { throw err; }
       grunt.log.ok(credentials.username + ' successfully authenticated!');
-      // Create directories specified in options.dest
+      // // Create directories specified in options.dest
       createDirectoriesForDestination(paths, function () {
         // Normalize destionation to be used in uploadFiles
         rootDestination = normalizeDir(options.dest);
