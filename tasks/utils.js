@@ -1,4 +1,3 @@
-var messages = require('./messages');
 var path = require('path');
 
 var utils = {
