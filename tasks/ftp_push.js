@@ -6,6 +6,8 @@
  * Licensed under the MIT license.
  */
 
+ var message = require('./messages');
+
 module.exports = function (grunt) {
   'use strict';
   var Ftp = require('jsftp'),
