@@ -2,14 +2,6 @@
 module.exports = {
   'test': {
     'files': [{
-      "src": ['test/jsftp'],
-      "orig": {
-        "expand": true,
-        "cwd": 'test',
-        "src": ['**/*']
-      },
-      "dest": 'jsftp'
-    }, {
         "src": ['test/jsftp/Test.txt'],
         "orig": {
             "expand": true,
@@ -25,22 +17,6 @@ module.exports = {
             "src": ['**/*']
         },
         "dest": 'jsftp/jsftpSpec.js'
-    }, {
-        "src": ['test/nested'],
-        "orig": {
-            "expand": true,
-            "cwd": 'test',
-            "src": ['**/*']
-        },
-        "dest": 'nested'
-    }, {
-        "src": ['test/nested/another'],
-        "orig": {
-            "expand": true,
-            "cwd": 'test',
-            "src": ['**/*']
-        },
-        "dest": 'nested/another'
     }, {
         "src": ['test/nested/another/sample.js'],
         "orig": {
@@ -69,20 +45,22 @@ module.exports = {
         }
     }],
     'paths': [{
-      'path': 'test/jsftp/Test.txt',
+      'src': 'test/jsftp/Test.txt',
       'dest': '/html/test/jsftp/Test.txt'
     }, {
-      'path': 'test/jsftp/jsftpSpec.js',
+      'src': 'test/jsftp/jsftpSpec.js',
       'dest': '/html/test/jsftp/jsftpSpec.js'
     }, {
-      'path': 'test/nested/another/sample.js',
+      'src': 'test/nested/another/sample.js',
       'dest': '/html/test/nested/another/sample.js'
     }, {
-      'path': 'tasks/ftp_push.js',
+      'src': 'tasks/ftp_push.js',
       'dest': '/html/test/test/ftp_push.js'
     }, {
-      'path': 'tasks/utils.js',
-      'dest': '/html/test/test/utils.js'
+      'src': 'tasks/utils.js',
+      'dest': '/html/test/test/utils.js',
+      // This wont normally be in the results, but will use this to test to make sure the path is correct
+      'badPath': '/html/test/tasks/utils.js'
     }],
     'base': '/html/test/'
   }
