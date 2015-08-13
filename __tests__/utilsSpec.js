@@ -53,20 +53,35 @@ describe('ftp_push - utils.getFilePaths', function () {
   });
 
   it('should accomodate relative destinations specified at the file level to be included in paths', function () {
-    var originalFile = fileMocks.test.files[4];
+    var file = fileMocks.test.files[4];
     var expected = fileMocks.test.paths[4];
-    var result = utils.getFilePaths(fileMocks.test.base, [originalFile])[0];
+    var result = utils.getFilePaths(fileMocks.test.base, [file])[0];
 
     expect(result.dest).toEqual(expected.dest);
     expect(result.dest).not.toEqual(expected.badPath);
   });
 
   it('should remove the current working directory from the filepath', function () {
-    expect(1).toEqual(1);
+    var file = fileMocks.test.files[0];
+    var result = utils.getFilePaths(fileMocks.test.base, [file])[0];
+    // First remove the base from the path, as we dont need to test the basepath, just the relative file path
+    // and the basepath may contain a directory similar to the cwd which would skew the results
+    var relativePath = result.dest.replace(fileMocks.test.base, '');
+    expect(relativePath.search(file.orig.cwd)).toEqual(-1);
   });
 
   it('should not contain any duplicates', function () {
-    expect(1).toEqual(1);
+    var results = utils.getFilePaths(fileMocks.test.base, fileMocks.test.files);
+    expect(results.length).toEqual(fileMocks.test.paths.length);
+
+    var allUnique = results.every(function (file, firstIndex) {
+        return results.every(function (file2, secondIndex) {
+          // Return true if the destinations are not the same or if the index
+          // is the same because that means its the same file
+          return file.dest !== file2.dest || firstIndex === secondIndex;
+        });
+    });
+    expect(allUnique).toBeTruthy();
   });
 
 });
