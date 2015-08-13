@@ -6,6 +6,7 @@ jest.dontMock('../mocks/fileObjects');
 
 var utils = require('../tasks/utils');
 var mocks = require('../mocks/utilMocks');
+var fileMocks = require('../mocks/fileObjects');
 
 describe('ftp_push - utils.optionsAreValid', function () {
   'use strict';
@@ -20,7 +21,6 @@ describe('ftp_push - utils.optionsAreValid', function () {
   });
 
 });
-
 
 describe('ftp_push - utils.trimCwd', function () {
   'use strict';
@@ -41,6 +41,9 @@ describe('ftp_push - utils.trimCwd', function () {
 
 describe('ftp_push - utils.getFilePaths', function () {
   'use strict';
+
+  var results = utils.getFilePaths(fileMocks.test.base, fileMocks.test.files);
+  console.log(results);
 
   it('should return an array of normalized filepaths', function () {
     expect(1).toEqual(1);
@@ -67,13 +70,51 @@ describe('ftp_push - utils.getFilePaths', function () {
 describe('ftp_push - utils.getDirectoryPaths', function () {
   'use strict';
 
-  // for example, foo/bar/baz/index.js should return ['foo', 'foo/bar', 'foo/bar/baz']
+  // for example, /foo/bar/baz/index.js should return ['/foo', '/foo/bar', '/foo/bar/baz']
   it('should return an array of directories partial paths', function () {
-    expect(1).toEqual(1);
+    var dirPaths = utils.getDirectoryPaths(mocks.dirPath.files);
+    // Should be the same length
+    expect(dirPaths.length).toEqual(mocks.dirPath.expected.length);
+    // Each item in the dirPaths should also be in mocks.dirPath.expected
+    var allPresent = dirPaths.every(function (path) {
+      return mocks.dirPath.expected.indexOf(path) > -1;
+    });
+    expect(allPresent).toBeTruthy();
   });
 
   it('should not contain any duplicates', function () {
-    expect(1).toEqual(1);
+    var dirPaths = utils.getDirectoryPaths(mocks.dirPathBad.files);
+    // Should be the same length
+    expect(dirPaths.length).toEqual(mocks.dirPathBad.expected.length);
+    // Each items index and lastIndex should be the same, if there not, then there is a duplicate
+    var allUnique = dirPaths.every(function (path) {
+      return dirPaths.indexOf(path) === dirPaths.lastIndexOf(path);
+    });
+    expect(allUnique).toBeTruthy();
+  });
+
+  it('should not contain any empty paths', function () {
+    var dirPaths = utils.getDirectoryPaths(mocks.dirPathBad.files);
+    // Should be the same length
+    expect(dirPaths.length).toEqual(mocks.dirPathBad.expected.length);
+    // There should not be a single entry where path === ''
+    var noBlanks = dirPaths.every(function (path) {
+      return path !== '';
+    });
+    expect(noBlanks).toBeTruthy();
+  });
+
+});
+
+describe('ftp_push - utils.arrayContainsFile', function () {
+  'use strict';
+
+  it('should return true when passed a destination and an array of files containing that destination', function () {
+    expect(utils.arrayContainsFile(mocks.arrayMatch.files, mocks.arrayMatch.duplicateDest)).toBeTruthy();
+  });
+
+  it('should return false when passed a destination and an array of files that does not have that destination', function () {
+    expect(utils.arrayContainsFile(mocks.arrayMatch.files, mocks.arrayMatch.uniqueDest)).toBeFalsy();
   });
 
 });
