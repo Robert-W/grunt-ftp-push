@@ -133,7 +133,7 @@ Currently the `host` and `dest` options are the only two required for this plugi
 #### Optional Options
 In your options, you may choose not to set up an .ftpauth file and not have an authKey present in your options.  You will probably then need to specify the username and password in the options object instead.  If you don't, the plugin will attempt to use an anonymous login.
 
-Specifying the username and password within the options object would look like the following: 
+Specifying the username and password within the options object would look like the following:
 ```js
 options: {
 	username: "myUsername",
@@ -144,10 +144,10 @@ options: {
 }
 ```
 #### Extras
-You can now specify a destination inside your files objects like so: 
-```js 
+You can now specify a destination inside your files objects like so:
+```js
 {expand: true,cwd: 'test',src: ['**/*']},
-{expand: true,cwd: 'tasks',src: ['**/*'], dest: 'tasks/' }
+{expand: true,cwd: 'tasks',src: ['**/*'], dest: 'test/' }
 ```
 This will allow you to configure where you push your code in case you want to push to a diretory structure that is different from your local one.  The dest here <strong>MUST</strong> be relative to the root destination.
 
@@ -174,7 +174,7 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 </li>
 <li>2014/07/24 - v 0.2.4  Fixed issue introduced with latest fix, added fix to remove cwd from path of file being pushed so they are pushed to the expected location.  Other minor fixes and enhancements.
 </li>
-<li>2014/07/20 - v 0.2.2 
+<li>2014/07/20 - v 0.2.2
 <ul>
 <li>Fixes for getting credentials correctly.</li><li>Creating directories correctly from dest if they don't exist.</li><li>Handling '/' appropriately in all cases.</li><li>Better error handling, restructured code, and more detailed comments.</li><li>Upgraded to latest jsftp(v 1.3.1). <a target='_blank' href='https://github.com/Robert-W/grunt-ftp-push/issues/8'>#8</a></li><li>Updated documentation for username and password.</li>
 </ul>
