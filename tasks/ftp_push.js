@@ -6,256 +6,355 @@
  * Licensed under the MIT license.
  */
 
- var message = require('./messages');
+var message = require('./messages');
+var utils = require('./utils');
+var path = require('path');
 
 module.exports = function (grunt) {
   'use strict';
-  var Ftp = require('jsftp'),
-      rootDestination,
-      ftpServer,
+
+  var Ftp = require('jsftp');
+  var basepath,
       options,
+      server,
       done;
 
-  /**
-   * @returns {Boolean} true is returned if the required options have all been supplied
-   */
-  function requirementsAreValid() {
-    // host and dest are mandatory options
-    return (options.host && options.dest);
-  }
-
-  /**
-  * @param {string} dest - path to directory
-  * @return {string} - Return dest with trailing slash if not present
-  */
-  function normalizeDir(dest) {
-    return (dest.charAt(dest.length - 1) !== '/' ? dest + '/' : dest);
-  }
-
-  /**
-  * @param {string} file - path to file
-  * @return {string} - Return file with initial slash removed
-  */
-  function normalizeFilename(file) {
-    return (file.charAt(0) === '/' ? file.slice(1) : file);
-  }
-
-  /**
-   * @param {string} file - path to file
-   * @param {string} cwd - path to current working directory
-   * @return {string} - Return file without cwd if it starts with cwd, otherwise return the raw file.
-   */
-  function trimLeadingCwd(file, cwd) {
-    if ((typeof cwd === 'string') && file.substr(0, cwd.length) === cwd) {
-      file = file.substr(cwd.length);
-    }
-    return file;
-  }
-
-  /**
-   * @return {Array} returns string filepaths that are relative to options.dest,
-   * they are reversed after filtering and mapping so they can be created in the correct order
-   */
-  function getFilePaths(filePaths) {
-    var pathsForFiles = [];
-    filePaths.forEach(function(f) {
-      f.src.filter(function(filepath) {
-        // Warn on and remove invalid source files (if nonull was set).
-        if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Source file "' + filepath + '" not found.');
-          return false;
-        } else {
-          return true;
-        }
-      }).map(function(filepath) {
-        pathsForFiles.push({
-          path: filepath,
-          cwd: f.orig.cwd,
-          dest: f.orig.dest
-        });
-      });
-    });
-    return pathsForFiles.reverse();
-  }
-  /**
-   * @return {Object} returns an object containing a username and password
-   */
-  function getCredentials() {
+  var getCredentials = function getCredentials(options) {
     if (options.authKey && grunt.file.exists('.ftpauth')) {
       return JSON.parse(grunt.file.read('.ftpauth'))[options.authKey];
     } else if (options.username && options.password) {
-      return {
-        username: options.username,
-        password: options.password
-      };
+      return { username: options.username, password: options.password };
     } else {
-      grunt.log.warn('Attempting Anonymous Login');
-      return {
-        username: null,
-        password: null
-      };
+      grunt.log.warn(message.anonymousLogin);
+      return { username: null, password: null };
     }
-  }
-  /**
-   * Passes an error to the callback if not able to complete its tasks
-   * Creates all directories necessary so that files can be pushed to options.dest
-   */
-  function createDirectoriesForDestination(fileObjects, callback) {
-    // Destination needs to end with / and not begin with / for following code to push correctly
-    // Remove preceeding slash if present, just use normalizeFilename function, it will work for this
-    var destination = normalizeFilename(options.dest),
-        preparedDestination,
-        destinations = [],
-        partials = [],
-        regex = /\//g,
-        index = 0,
-        match;
+  };
 
-    destination = normalizeDir(destination);
-    destinations.push(destination);
+  grunt.registerMultiTask('ftp_push', 'Transfer files using FTP.', function() {
 
-    // If there are other destinations specified in the dest obj of individual entries, add those here
-    // so they can be created before I push any files to the server
-    fileObjects.forEach(function (fileItem) {
-      if (fileItem.dest) {
-        // Prepare the destination, then push into array for processing
-        preparedDestination = destination + normalizeDir(fileItem.dest);
-        destinations.push(preparedDestination);
-      } else {
-        // Prepare the destination, then push into array for processing
-        preparedDestination = destination + trimLeadingCwd(fileItem.path, fileItem.cwd);
-        destinations.push(preparedDestination);
-      }
+    var destinations,
+        files,
+        paths,
+        creds,
+        dirs;
+
+    // Merge task-specific and/or target-specific options with these defaults.
+    options = this.options({
+      autoReconnect: true,
+      reconnectLimit: 3,
+      keepAlive: 60000
     });
 
-    // Create an array of directories that I will need to create
-    // If the destination is / ignore it, else process it
-    // This takes foo/bar/baz and returns ['foo','foo/bar','foo/bar/baz']
-    destinations.forEach(function (directoryDest) {
-      if (directoryDest.length !== 1) {
-        while ((match = regex.exec(directoryDest)) !== null) {
-          partials.push(directoryDest.slice(0, match.index));
-        }
-      }
-    });
+    // Tell Grunt not to finish until my async methods are completed, calling done() to finish
+    done = this.async();
 
-    // De-duplicate partials
-    partials = partials.reduce(function(collector, element) {
-      if (collector.indexOf(element) < 0) collector.push(element);
-      return collector;
-    }, []);
-
-    /**
-     * Helper recursive function to push all directories that are present in partials array
-     */
-    function processPartials(err) {
-      // Throw fatal error if any error other then error then 550 is present, will need these directories created to continue
-      if (err) {
-        if (err.code !== 550) { throw err; } // Directory Already Created
-      } else {
-        grunt.log.ok(partials[index] + ' directory created successfully.');
-      }
-
-      ++index;
-
-      if (index < partials.length) {
-        // Push another directory and pass self as callback to continue processing the remaining partials
-        ftpServer.raw.mkd(partials[index], processPartials);
-      } else {
-        callback(); // Call the callback to continue processing
-      }
-    }
-
-    // Start making directories
-    if (partials.length > 0) {
-      ftpServer.raw.mkd(partials[index], processPartials);
-    } else {
-      callback();
-    }
-  }
-  /**
-   * Upload all files that are present in the paths array
-   */
-  function uploadFiles(paths) {
-    // Fire keep alive to ftp server every 60 seconds to avoid session timeouts.
-    ftpServer.keepAlive(options.keepAlive);
-    /**
-     * Helper recursive function to process all available paths
-     */
-    function processPaths() {
-      if (paths.length < 1) {
-        closeConnection();
-        return;// We are completed, close connection and end the program
-      }
-      // Pop a file, file cannot start with a /, remove cwd from path unless it's . or ./
-      var fileObject = paths.pop(),
-          file = fileObject.path,
-          cwd = fileObject.cwd,
-          relativeDest,
-          destPath;
-
-      // Guarantee the path is pushed to the intended location
-      // Remove cwd from path unless its . or ./
-      destPath = trimLeadingCwd(file, cwd);
-      // Remove / from start of file if present
-      destPath = normalizeFilename(destPath);
-      // file could have optional destination different from default, if so, add it here
-      if (fileObject.dest) {
-        // Make sure relative destination ends in /
-        relativeDest = normalizeDir(fileObject.dest);
-        destPath = rootDestination + relativeDest + destPath;
-      } else {
-        destPath = rootDestination + destPath;
-      }
-
-      // If directory, create it and continue processing
-      if (grunt.file.isDir(file)) {
-        ftpServer.raw.mkd(destPath, function (err, data) {
-          if (err){
-            if (err.code !== 550) { throw err; } // Directory Already Created
-          } else {
-            grunt.log.ok(destPath + ' directory created successfully.');
-          }
-          processPaths(); // Continue Processing
-        });
-      } else {
-        ftpServer.put(grunt.file.read(file,{encoding:null}), destPath, function (err) {
-          if (err) {
-            grunt.log.warn(destPath + ' failed to transfer because ' + err); // Notify User file could not be pushed
-          } else {
-            grunt.log.ok(destPath + ' transferred successfully.');
-          }
-          processPaths(); // Continue Processing
-        });
-      }
-    }
-    // Start the process
-    processPaths();
-  }
-  /**
-   * Close the connection and end the asynchronous task
-   */
-  function closeConnection(errMsg) {
-    if (ftpServer) {
-      ftpServer.raw.quit(function(err, res) {
-        if (err) {
-          grunt.log.error(err);
-          done(false);
-        }
-        ftpServer.destroy();
-        grunt.log.ok('FTP connection closed!');
-        done();
-      });
-    } else if (errMsg) {
-      grunt.log.warn(errMsg);
+    // Check for minimum requirements
+    if (!utils.optionsAreValid(options)) {
+      grunt.log.warn(message.invalidRequirements);
       done(false);
-    } else {
-      done();
+      return;
     }
-  }
-  /**
-   * Register Task and Begin Running the Plugin Here
-   */
+
+    // Remove directories from this.files and invalid paths
+    this.files.forEach(function (file) {
+      files = file.src.filter(function (filepath) {
+        // If the file does not exist, remove it
+        if (!grunt.file.exists(path)) {
+          grunt.log.warn(message.fileNotExist(filepath));
+          return false;
+        }
+        // If this is a file, keep it
+        return grunt.file.isFile(filepath);
+      });
+    });
+
+    // Basepath of where to push
+    basepath = path.normalize(options.dest);
+    // Get Credentials
+    creds = getCredentials();
+    // Get list of file objects to push, containing src & path properties
+    paths = utils.getFilePaths(files);
+    // Get a list of the required directories to push so the file transfer goes smooth
+    // First grab a list of the destination paths only, then get a list or dirs
+    destinations = utils.getDestinations(paths);
+    dirs = utils.getDirectoryPaths(destinations);
+    // Create the FileServer
+    server = new Ftp({
+      host: options.host,
+      port: options.port || 21,
+      debugMode: options.debug || false
+    });
+    // Log if in debug mode
+    if (options.debug) {
+      server.on('jsftp_debug', function(eventType, data) {
+        grunt.log.write(message.debug(eventType));
+        grunt.log.write(JSON.stringify(data, null, 2));
+      });
+    }
+    // Authenticate with the server and begin pushing files up
+    server.auth(creds.username, creds.password, function(err) {
+      // If there is an error, just fail
+      if (err) {
+        grunt.fail.fatal(message.authFailure(creds.username));
+      } else {
+        grunt.log.ok(message.authSuccess(creds.username));
+      }
+
+
+    });
+
+  });
+
+};
+
+// module.exports = function (grunt) {
+//   'use strict';
+//   var Ftp = require('jsftp'),
+//       rootDestination,
+//       ftpServer,
+//       options,
+//       done;
+//
+//   /**
+//    * @returns {Boolean} true is returned if the required options have all been supplied
+//    */
+//   function requirementsAreValid() {
+//     // host and dest are mandatory options
+//     return (options.host && options.dest);
+//   }
+//
+//   /**
+//   * @param {string} dest - path to directory
+//   * @return {string} - Return dest with trailing slash if not present
+//   */
+//   function normalizeDir(dest) {
+//     return (dest.charAt(dest.length - 1) !== '/' ? dest + '/' : dest);
+//   }
+//
+//   /**
+//   * @param {string} file - path to file
+//   * @return {string} - Return file with initial slash removed
+//   */
+//   function normalizeFilename(file) {
+//     return (file.charAt(0) === '/' ? file.slice(1) : file);
+//   }
+//
+//   /**
+//    * @param {string} file - path to file
+//    * @param {string} cwd - path to current working directory
+//    * @return {string} - Return file without cwd if it starts with cwd, otherwise return the raw file.
+//    */
+//   function trimLeadingCwd(file, cwd) {
+//     if ((typeof cwd === 'string') && file.substr(0, cwd.length) === cwd) {
+//       file = file.substr(cwd.length);
+//     }
+//     return file;
+//   }
+//
+//   /**
+//    * @return {Array} returns string filepaths that are relative to options.dest,
+//    * they are reversed after filtering and mapping so they can be created in the correct order
+//    */
+//   function getFilePaths(filePaths) {
+//     var pathsForFiles = [];
+//     filePaths.forEach(function(f) {
+//       f.src.filter(function(filepath) {
+//         // Warn on and remove invalid source files (if nonull was set).
+//         if (!grunt.file.exists(filepath)) {
+//           grunt.log.warn('Source file "' + filepath + '" not found.');
+//           return false;
+//         } else {
+//           return true;
+//         }
+//       }).map(function(filepath) {
+//         pathsForFiles.push({
+//           path: filepath,
+//           cwd: f.orig.cwd,
+//           dest: f.orig.dest
+//         });
+//       });
+//     });
+//     return pathsForFiles.reverse();
+//   }
+//   /**
+//    * @return {Object} returns an object containing a username and password
+//    */
+  // function getCredentials() {
+  //   if (options.authKey && grunt.file.exists('.ftpauth')) {
+  //     return JSON.parse(grunt.file.read('.ftpauth'))[options.authKey];
+  //   } else if (options.username && options.password) {
+  //     return {
+  //       username: options.username,
+  //       password: options.password
+  //     };
+  //   } else {
+  //     grunt.log.warn('Attempting Anonymous Login');
+  //     return {
+  //       username: null,
+  //       password: null
+  //     };
+  //   }
+  // }
+//   /**
+//    * Passes an error to the callback if not able to complete its tasks
+//    * Creates all directories necessary so that files can be pushed to options.dest
+//    */
+//   function createDirectoriesForDestination(fileObjects, callback) {
+//     // Destination needs to end with / and not begin with / for following code to push correctly
+//     // Remove preceeding slash if present, just use normalizeFilename function, it will work for this
+//     var destination = normalizeFilename(options.dest),
+//         preparedDestination,
+//         destinations = [],
+//         partials = [],
+//         regex = /\//g,
+//         index = 0,
+//         match;
+//
+//     destination = normalizeDir(destination);
+//     destinations.push(destination);
+//
+//     // If there are other destinations specified in the dest obj of individual entries, add those here
+//     // so they can be created before I push any files to the server
+//     fileObjects.forEach(function (fileItem) {
+//       if (fileItem.dest) {
+//         // Prepare the destination, then push into array for processing
+//         preparedDestination = destination + normalizeDir(fileItem.dest);
+//         destinations.push(preparedDestination);
+//       } else {
+//         // Prepare the destination, then push into array for processing
+//         preparedDestination = destination + trimLeadingCwd(fileItem.path, fileItem.cwd);
+//         destinations.push(preparedDestination);
+//       }
+//     });
+//
+//     // Create an array of directories that I will need to create
+//     // If the destination is / ignore it, else process it
+//     // This takes foo/bar/baz and returns ['foo','foo/bar','foo/bar/baz']
+//     destinations.forEach(function (directoryDest) {
+//       if (directoryDest.length !== 1) {
+//         while ((match = regex.exec(directoryDest)) !== null) {
+//           partials.push(directoryDest.slice(0, match.index));
+//         }
+//       }
+//     });
+//
+//     // De-duplicate partials
+//     partials = partials.reduce(function(collector, element) {
+//       if (collector.indexOf(element) < 0) collector.push(element);
+//       return collector;
+//     }, []);
+//
+//     /**
+//      * Helper recursive function to push all directories that are present in partials array
+//      */
+//     function processPartials(err) {
+//       // Throw fatal error if any error other then error then 550 is present, will need these directories created to continue
+//       if (err) {
+//         if (err.code !== 550) { throw err; } // Directory Already Created
+//       } else {
+//         grunt.log.ok(partials[index] + ' directory created successfully.');
+//       }
+//
+//       ++index;
+//
+//       if (index < partials.length) {
+//         // Push another directory and pass self as callback to continue processing the remaining partials
+//         ftpServer.raw.mkd(partials[index], processPartials);
+//       } else {
+//         callback(); // Call the callback to continue processing
+//       }
+//     }
+//
+//     // Start making directories
+//     if (partials.length > 0) {
+//       ftpServer.raw.mkd(partials[index], processPartials);
+//     } else {
+//       callback();
+//     }
+//   }
+//   /**
+//    * Upload all files that are present in the paths array
+//    */
+//   function uploadFiles(paths) {
+//     // Fire keep alive to ftp server every 60 seconds to avoid session timeouts.
+//     ftpServer.keepAlive(options.keepAlive);
+//     /**
+//      * Helper recursive function to process all available paths
+//      */
+//     function processPaths() {
+//       if (paths.length < 1) {
+//         closeConnection();
+//         return;// We are completed, close connection and end the program
+//       }
+//       // Pop a file, file cannot start with a /, remove cwd from path unless it's . or ./
+//       var fileObject = paths.pop(),
+//           file = fileObject.path,
+//           cwd = fileObject.cwd,
+//           relativeDest,
+//           destPath;
+//
+//       // Guarantee the path is pushed to the intended location
+//       // Remove cwd from path unless its . or ./
+//       destPath = trimLeadingCwd(file, cwd);
+//       // Remove / from start of file if present
+//       destPath = normalizeFilename(destPath);
+//       // file could have optional destination different from default, if so, add it here
+//       if (fileObject.dest) {
+//         // Make sure relative destination ends in /
+//         relativeDest = normalizeDir(fileObject.dest);
+//         destPath = rootDestination + relativeDest + destPath;
+//       } else {
+//         destPath = rootDestination + destPath;
+//       }
+//
+//       // If directory, create it and continue processing
+//       if (grunt.file.isDir(file)) {
+//         ftpServer.raw.mkd(destPath, function (err, data) {
+//           if (err){
+//             if (err.code !== 550) { throw err; } // Directory Already Created
+//           } else {
+//             grunt.log.ok(destPath + ' directory created successfully.');
+//           }
+//           processPaths(); // Continue Processing
+//         });
+//       } else {
+//         ftpServer.put(grunt.file.read(file,{encoding:null}), destPath, function (err) {
+//           if (err) {
+//             grunt.log.warn(destPath + ' failed to transfer because ' + err); // Notify User file could not be pushed
+//           } else {
+//             grunt.log.ok(destPath + ' transferred successfully.');
+//           }
+//           processPaths(); // Continue Processing
+//         });
+//       }
+//     }
+//     // Start the process
+//     processPaths();
+//   }
+//   /**
+//    * Close the connection and end the asynchronous task
+//    */
+//   function closeConnection(errMsg) {
+//     if (ftpServer) {
+//       ftpServer.raw.quit(function(err, res) {
+//         if (err) {
+//           grunt.log.error(err);
+//           done(false);
+//         }
+//         ftpServer.destroy();
+//         grunt.log.ok('FTP connection closed!');
+//         done();
+//       });
+//     } else if (errMsg) {
+//       grunt.log.warn(errMsg);
+//       done(false);
+//     } else {
+//       done();
+//     }
+//   }
+//   /**
+//    * Register Task and Begin Running the Plugin Here
+//    */
   grunt.registerMultiTask('ftp_push', 'Deploy files to a FTP server.', function() {
 
     var credentials,
@@ -312,5 +411,5 @@ module.exports = function (grunt) {
     });
 
   });
-
-};
+//
+// };

@@ -59,19 +59,6 @@ var utils = {
   * @param {object[]} files - Array of file objects found by grunt
   * @return {object[]} returns a complete array of file path objects containing path and dest
   */
-
-  /*, Will go in main task file before calling this function, used to be part of it but am pulling it out
-  // First filter the files
-  file.src.filter(function (filepath) {
-    // If the file does not exist, remove it
-    if (!grunt.file.exists(path)) {
-      grunt.log.warn(messages.fileNotExist(path));
-      return false;
-    }
-    // If this path is to a file than keep it, else remove it
-    return grunt.file.isFile(path);
-  });
-  */
   getFilePaths: function (basePath, files) {
     var filePaths = [],
         destination;
