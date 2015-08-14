@@ -5,8 +5,7 @@
  * Copyright (c) 2013 Robert Winterbottom
  * Licensed under the MIT license.
  */
-
-var message = require('./messages');
+var messages = require('./messages');
 var utils = require('./utils');
 var path = require('path');
 
@@ -19,22 +18,107 @@ module.exports = function (grunt) {
       server,
       done;
 
+  /**
+  * Based off of whats in the options, create a credentials object
+  * @param {object} options - grunt options provided to the plugin
+  * @return {object} {username: '...', password: '...'}
+  */
   var getCredentials = function getCredentials(options) {
     if (options.authKey && grunt.file.exists('.ftpauth')) {
       return JSON.parse(grunt.file.read('.ftpauth'))[options.authKey];
     } else if (options.username && options.password) {
       return { username: options.username, password: options.password };
     } else {
-      grunt.log.warn(message.anonymousLogin);
+      // Warn the user we are attempting an anonymous login
+      grunt.log.warn(messages.anonymousLogin);
       return { username: null, password: null };
     }
+  };
+
+  /**
+  * Helper function that uses a recursive style for creating directories until none remain
+  * @param {array} directories - Array of directory paths that will be necessary to upload files
+  * @param {function} callback - function to trigger when all directories have been created
+  */
+  var pushDirectories = function pushDirectories(directories, callback) {
+    var index = 0;
+
+    /**
+    * Recursive helper used as callback for server.raw.mkd
+    * @param {error} err - Error message if something went wrong
+    */
+    var processDir = function processDir (err) {
+      // Fail if any error other then 550 is present, 550 is Directory Already Exists
+      // these directories must exist to continue
+      if (err) {
+        if (err.code !== 550) { grunt.fail.warn(err); }
+      } else {
+        grunt.log.ok(messages.directoryCreated(directories[index]));
+      }
+
+      ++index;
+      // If there is more directories to process then keep going
+      if (index < directories.length) {
+        server.raw.mkd(directories[index], processDir);
+      } else {
+        callback();
+      }
+    };
+
+    // Start processing dirs or end if none are present
+    if (index < directories.length) {
+      server.raw.mkd(directories[index], processDir);
+    } else {
+      callback();
+    }
+  };
+
+  /**
+  * Helper function that uses a recursive style for uploading files until none remain
+  * @param {object[]} files - Array of file objects to upload, {src: '...', dest: '...'}
+  */
+  var uploadFiles = function uploadFiles(files) {
+    var index = 0,
+        file = files[index];
+
+    /**
+    * Recursive helper used as callback for server.raw.put
+    * @param {error} err - Error message if something went wrong
+    */
+    var processFile = function processFile (err) {
+      if (err) {
+        grunt.log.warn(messages.fileTransferFail(file.src, err));
+      } else {
+        grunt.log.ok(messages.fileTransferSuccess(file.src));
+      }
+
+      ++index;
+      // If there are more files, then keep pushing
+      if (index < files.length) {
+        file = files[index];
+        server.raw.put(grunt.file.read(file.src, {encoding:null}), file.dest, processFile);
+      } else {
+        // Close the connection, we are complete
+        server.raw.quit(function(err) {
+          if (err) {
+            grunt.log.error(err);
+            done(false);
+          }
+          server.destroy();
+          grunt.log.ok(messages.connectionClosed);
+          done();
+        });
+      }
+    };
+
+    // Start uploading files
+    server.raw.put(grunt.file.read(file.src, {encoding:null}), file.dest, processFile);
   };
 
   grunt.registerMultiTask('ftp_push', 'Transfer files using FTP.', function() {
 
     var destinations,
         files,
-        paths,
         creds,
         dirs;
 
@@ -50,17 +134,17 @@ module.exports = function (grunt) {
 
     // Check for minimum requirements
     if (!utils.optionsAreValid(options)) {
-      grunt.log.warn(message.invalidRequirements);
+      grunt.log.warn(messages.invalidRequirements);
       done(false);
       return;
     }
 
-    // Remove directories from this.files and invalid paths
+    // Remove directories and invalid paths from this.files
     this.files.forEach(function (file) {
       files = file.src.filter(function (filepath) {
         // If the file does not exist, remove it
         if (!grunt.file.exists(path)) {
-          grunt.log.warn(message.fileNotExist(filepath));
+          grunt.log.warn(messages.fileNotExist(filepath));
           return false;
         }
         // If this is a file, keep it
@@ -73,10 +157,10 @@ module.exports = function (grunt) {
     // Get Credentials
     creds = getCredentials();
     // Get list of file objects to push, containing src & path properties
-    paths = utils.getFilePaths(files);
-    // Get a list of the required directories to push so the file transfer goes smooth
-    // First grab a list of the destination paths only, then get a list or dirs
-    destinations = utils.getDestinations(paths);
+    files = utils.getFilePaths(files);
+    // Get a list of the required directories to push so the files can be uploaded
+    // getDirectoryPaths takes an array of strings, get a string[] of destinations
+    destinations = utils.getDestinations(files);
     dirs = utils.getDirectoryPaths(destinations);
     // Create the FileServer
     server = new Ftp({
@@ -87,7 +171,7 @@ module.exports = function (grunt) {
     // Log if in debug mode
     if (options.debug) {
       server.on('jsftp_debug', function(eventType, data) {
-        grunt.log.write(message.debug(eventType));
+        grunt.log.write(messages.debug(eventType));
         grunt.log.write(JSON.stringify(data, null, 2));
       });
     }
@@ -95,11 +179,16 @@ module.exports = function (grunt) {
     server.auth(creds.username, creds.password, function(err) {
       // If there is an error, just fail
       if (err) {
-        grunt.fail.fatal(message.authFailure(creds.username));
+        grunt.fail.fatal(messages.authFailure(creds.username));
       } else {
-        grunt.log.ok(message.authSuccess(creds.username));
+        grunt.log.ok(messages.authSuccess(creds.username));
       }
 
+      // Push directories first
+      pushDirectories(dirs, function () {
+        // Directories have successfully been pushed, now upload files
+        uploadFiles(files);
+      });
 
     });
 
@@ -248,12 +337,12 @@ module.exports = function (grunt) {
 //      * Helper recursive function to push all directories that are present in partials array
 //      */
 //     function processPartials(err) {
-//       // Throw fatal error if any error other then error then 550 is present, will need these directories created to continue
-//       if (err) {
-//         if (err.code !== 550) { throw err; } // Directory Already Created
-//       } else {
-//         grunt.log.ok(partials[index] + ' directory created successfully.');
-//       }
+      // // Throw fatal error if any error other then error then 550 is present, will need these directories created to continue
+      // if (err) {
+      //   if (err.code !== 550) { throw err; } // Directory Already Created
+      // } else {
+      //   grunt.log.ok(partials[index] + ' directory created successfully.');
+      // }
 //
 //       ++index;
 //

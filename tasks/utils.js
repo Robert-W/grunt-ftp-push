@@ -57,7 +57,7 @@ var utils = {
   *     it will need to trim cwd from paths, use optional relative destinations, and avoid duplicates
   * @param {string} basePath - Base path provided by options.dest
   * @param {object[]} files - Array of file objects found by grunt
-  * @return {object[]} returns a complete array of file path objects containing path and dest
+  * @return {object[]} returns a complete array of file path objects, {src: '...', dest: '...'}
   */
   getFilePaths: function (basePath, files) {
     var filePaths = [],
