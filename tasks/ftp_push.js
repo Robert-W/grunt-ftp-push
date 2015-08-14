@@ -444,61 +444,61 @@ module.exports = function (grunt) {
 //   /**
 //    * Register Task and Begin Running the Plugin Here
 //    */
-  grunt.registerMultiTask('ftp_push', 'Deploy files to a FTP server.', function() {
-
-    var credentials,
-        paths;
-
-    // Merge task-specific and/or target-specific options with these defaults.
-    options = this.options({
-      autoReconnect: true,
-      reconnectLimit: 3,
-      keepAlive: 60000
-    });
-
-    // Tell Grunt not to finish until my async methods are completed, calling done() to finish
-    done = this.async();
-
-    // Make Sure all requirements are valid
-    if (!requirementsAreValid()) {
-      closeConnection('You did not specify all the requirements.  Please refer to the documentation at ' +
-        'the following url for instructions. https://github.com/Robert-W/grunt-ftp-push#required-options');
-      return;
-    }
-
-    // Create ftpServer Object
-    ftpServer = new Ftp({
-      host: options.host,
-      port: options.port || 21,
-      debugMode: options.debug || false
-    });
-
-    ftpServer.on('jsftp_debug', function(eventType, data) {
-      console.log('DEBUG: ', eventType);
-      console.log(JSON.stringify(data, null, 2));
-    });
-
-    // Get filePaths
-    paths = getFilePaths(this.files);
-
-    // Get Authentication Object
-    credentials = getCredentials();
-
-    // Authenticate yourself to the server
-    ftpServer.auth(credentials.username, credentials.password, function(err) {
-      // If error, throw fatal
-      if (err) { throw err; }
-      grunt.log.ok(credentials.username + ' successfully authenticated!');
-      // // Create directories specified in options.dest
-      createDirectoriesForDestination(paths, function () {
-        // Normalize destionation to be used in uploadFiles
-        rootDestination = normalizeDir(options.dest);
-        // Upload the files and close the connection on completion
-        uploadFiles(paths);
-      });
-
-    });
-
-  });
+  // grunt.registerMultiTask('ftp_push', 'Deploy files to a FTP server.', function() {
+  //
+  //   var credentials,
+  //       paths;
+  //
+  //   // Merge task-specific and/or target-specific options with these defaults.
+  //   options = this.options({
+  //     autoReconnect: true,
+  //     reconnectLimit: 3,
+  //     keepAlive: 60000
+  //   });
+  //
+  //   // Tell Grunt not to finish until my async methods are completed, calling done() to finish
+  //   done = this.async();
+  //
+  //   // Make Sure all requirements are valid
+  //   if (!requirementsAreValid()) {
+  //     closeConnection('You did not specify all the requirements.  Please refer to the documentation at ' +
+  //       'the following url for instructions. https://github.com/Robert-W/grunt-ftp-push#required-options');
+  //     return;
+  //   }
+  //
+  //   // Create ftpServer Object
+  //   ftpServer = new Ftp({
+  //     host: options.host,
+  //     port: options.port || 21,
+  //     debugMode: options.debug || false
+  //   });
+  //
+  //   ftpServer.on('jsftp_debug', function(eventType, data) {
+  //     console.log('DEBUG: ', eventType);
+  //     console.log(JSON.stringify(data, null, 2));
+  //   });
+  //
+  //   // Get filePaths
+  //   paths = getFilePaths(this.files);
+  //
+  //   // Get Authentication Object
+  //   credentials = getCredentials();
+  //
+  //   // Authenticate yourself to the server
+  //   ftpServer.auth(credentials.username, credentials.password, function(err) {
+  //     // If error, throw fatal
+  //     if (err) { throw err; }
+  //     grunt.log.ok(credentials.username + ' successfully authenticated!');
+  //     // // Create directories specified in options.dest
+  //     createDirectoriesForDestination(paths, function () {
+  //       // Normalize destionation to be used in uploadFiles
+  //       rootDestination = normalizeDir(options.dest);
+  //       // Upload the files and close the connection on completion
+  //       uploadFiles(paths);
+  //     });
+  //
+  //   });
+  //
+  // });
 //
 // };
