@@ -87,16 +87,16 @@ module.exports = function (grunt) {
     */
     var processFile = function processFile (err) {
       if (err) {
-        grunt.log.warn(messages.fileTransferFail(file.src, err));
+        grunt.log.warn(messages.fileTransferFail(file.dest, err));
       } else {
-        grunt.log.ok(messages.fileTransferSuccess(file.src));
+        grunt.log.ok(messages.fileTransferSuccess(file.dest));
       }
 
       ++index;
       // If there are more files, then keep pushing
       if (index < files.length) {
         file = files[index];
-        server.raw.put(grunt.file.read(file.src, {encoding:null}), file.dest, processFile);
+        server.put(grunt.file.read(file.src, {encoding:null}), file.dest, processFile);
       } else {
         // Close the connection, we are complete
         server.raw.quit(function(err) {
@@ -112,7 +112,7 @@ module.exports = function (grunt) {
     };
 
     // Start uploading files
-    server.raw.put(grunt.file.read(file.src, {encoding:null}), file.dest, processFile);
+    server.put(grunt.file.read(file.src, {encoding:null}), file.dest, processFile);
   };
 
   grunt.registerMultiTask('ftp_push', 'Transfer files using FTP.', function() {
@@ -141,9 +141,9 @@ module.exports = function (grunt) {
 
     // Remove directories and invalid paths from this.files
     this.files.forEach(function (file) {
-      files = file.src.filter(function (filepath) {
+      file.src = file.src.filter(function (filepath) {
         // If the file does not exist, remove it
-        if (!grunt.file.exists(path)) {
+        if (!grunt.file.exists(filepath)) {
           grunt.log.warn(messages.fileNotExist(filepath));
           return false;
         }
@@ -155,9 +155,9 @@ module.exports = function (grunt) {
     // Basepath of where to push
     basepath = path.normalize(options.dest);
     // Get Credentials
-    creds = getCredentials();
+    creds = getCredentials(options);
     // Get list of file objects to push, containing src & path properties
-    files = utils.getFilePaths(files);
+    files = utils.getFilePaths(basepath, this.files);
     // Get a list of the required directories to push so the files can be uploaded
     // getDirectoryPaths takes an array of strings, get a string[] of destinations
     destinations = utils.getDestinations(files);
@@ -168,6 +168,7 @@ module.exports = function (grunt) {
       port: options.port || 21,
       debugMode: options.debug || false
     });
+
     // Log if in debug mode
     if (options.debug) {
       server.on('jsftp_debug', function(eventType, data) {
@@ -175,6 +176,7 @@ module.exports = function (grunt) {
         grunt.log.write(JSON.stringify(data, null, 2));
       });
     }
+
     // Authenticate with the server and begin pushing files up
     server.auth(creds.username, creds.password, function(err) {
       // If there is an error, just fail

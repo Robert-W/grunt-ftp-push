@@ -11,7 +11,6 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
 
-    // Configuration to be run (and then tested).
     ftp_push: {
       default: {
         options: {
