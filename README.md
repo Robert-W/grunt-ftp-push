@@ -1,4 +1,4 @@
-# grunt-ftp-push
+# grunt-ftp-push  [![Build Status](https://travis-ci.org/Robert-W/grunt-ftp-push.svg?branch=0.4.0)](https://travis-ci.org/Robert-W/grunt-ftp-push)
 
 > Deploy your files to a FTP server <br>
 > Notice: Currently SFTP is not supported
