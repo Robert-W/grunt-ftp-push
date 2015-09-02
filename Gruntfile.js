@@ -21,7 +21,7 @@ module.exports = function(grunt) {
         },
         files: [ // Enable Dynamic Expansion, Src matches are relative to this path, Actual Pattern(s) to match
           {expand: true, cwd: 'test', src: ['**/*']},
-          {expand: true, cwd: 'tasks', src: ['**/*'], dest: 'test/' }
+          {expand: true, cwd: 'tasks', src: ['**/*'], dest: './' }
         ]
       },
 
@@ -45,7 +45,7 @@ module.exports = function(grunt) {
   // Actually load this plugin's task(s).
   grunt.loadTasks('tasks');
 
-  grunt.registerTask('test', ['ftp_push']);
+  grunt.registerTask('default', ['ftp_push:default']);
   grunt.registerTask('sample', ['ftp_push:sample']);
 
 };
