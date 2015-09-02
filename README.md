@@ -152,7 +152,6 @@ You can now specify a destination inside your files objects like so:
 This will allow you to configure where you push your code in case you want to push to a diretory structure that is different from your local one.  The dest here <strong>MUST</strong> be relative to the root destination.
 
 ## Dependencies
-
 This plugin uses Sergi Mansilla's <a href="https://github.com/sergi/jsftp">jsftp</a> node.js module.
 
 ## Coming Soon
