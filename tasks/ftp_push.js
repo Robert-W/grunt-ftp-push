@@ -20,14 +20,14 @@ module.exports = function (grunt) {
 
   /**
   * Based off of whats in the options, create a credentials object
-  * @param {object} options - grunt options provided to the plugin
+  * @param {object} gruntOptions - grunt options provided to the plugin
   * @return {object} {username: '...', password: '...'}
   */
-  var getCredentials = function getCredentials(options) {
-    if (options.authKey && grunt.file.exists('.ftpauth')) {
-      return JSON.parse(grunt.file.read('.ftpauth'))[options.authKey];
-    } else if (options.username && options.password) {
-      return { username: options.username, password: options.password };
+  var getCredentials = function getCredentials(gruntOptions) {
+    if (gruntOptions.authKey && grunt.file.exists('.ftpauth')) {
+      return JSON.parse(grunt.file.read('.ftpauth'))[gruntOptions.authKey];
+    } else if (gruntOptions.username && gruntOptions.password) {
+      return { username: gruntOptions.username, password: gruntOptions.password };
     } else {
       // Warn the user we are attempting an anonymous login
       grunt.log.warn(messages.anonymousLogin);
@@ -83,11 +83,11 @@ module.exports = function (grunt) {
 
     /**
     * Recursive helper used as callback for server.raw.put
-    * @param {error} err - Error message if something went wrong
+    * @param {error} putErr - Error message if something went wrong
     */
-    var processFile = function processFile (err) {
-      if (err) {
-        grunt.log.warn(messages.fileTransferFail(file.dest, err));
+    var processFile = function processFile (putErr) {
+      if (putErr) {
+        grunt.log.warn(messages.fileTransferFail(file.dest, putErr));
       } else {
         grunt.log.ok(messages.fileTransferSuccess(file.dest));
       }
@@ -96,12 +96,12 @@ module.exports = function (grunt) {
       // If there are more files, then keep pushing
       if (index < files.length) {
         file = files[index];
-        server.put(grunt.file.read(file.src, {encoding:null}), file.dest, processFile);
+        server.put(grunt.file.read(file.src, {encoding: null}), file.dest, processFile);
       } else {
         // Close the connection, we are complete
-        server.raw.quit(function(err) {
-          if (err) {
-            grunt.log.error(err);
+        server.raw.quit(function(quitErr) {
+          if (quitErr) {
+            grunt.log.error(quitErr);
             done(false);
           }
           server.destroy();
@@ -112,7 +112,7 @@ module.exports = function (grunt) {
     };
 
     // Start uploading files
-    server.put(grunt.file.read(file.src, {encoding:null}), file.dest, processFile);
+    server.put(grunt.file.read(file.src, {encoding: null}), file.dest, processFile);
   };
 
   grunt.registerMultiTask('ftp_push', 'Transfer files using FTP.', function() {

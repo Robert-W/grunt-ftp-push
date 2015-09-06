@@ -160,10 +160,11 @@ More Examples in the README to show different ways of using it<br>
 Possibly adding in support for SFTP
 
 ## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
+Please add unit tests in the root of the test folder for any new or changed functionality and please try to make sure that `npm test` will pass before submitting a pull request.
 
 ## Release History
 <ul>
+<li>2015/09/03 - v 0.4.1 Swapped out jest for mocha and chai due to windows compatability issues.</li>
 <li>2015/09/03 - v 0.4.0 Several minor bug fixes, added unit tests, code cleanup, and now using nodes path module.</li>
 <li>2015/06/25 - v 0.3.6 Merged updates from <a href='https://github.com/Robert-W/grunt-ftp-push/pull/25'>#25 - De-Duplicate destination directories</a>.</li>
 <li>2015/05/20 - v 0.3.4 Merged fix for empty folder structure being created. <a href='https://github.com/Robert-W/grunt-ftp-push/pull/24'>#24</a></li>

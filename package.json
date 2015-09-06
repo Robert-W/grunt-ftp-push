@@ -1,7 +1,7 @@
 {
   "name": "grunt-ftp-push",
   "description": "Deploy your files to a FTP server.",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "homepage": "http://robert-w.github.io/grunt-ftp-push",
   "author": {
     "name": "Robert Winterbottom",
@@ -25,28 +25,26 @@
     "node": ">= 0.8.0"
   },
   "scripts": {
-    "test": "jest --verbose"
-  },
-  "jest": {
-    "testFileExtensions": [
-      "js"
-    ],
-    "moduleFileExtensions": [
-      "js"
-    ]
+    "test": "eslint tasks/* && eslint test/* && mocha ./test/*.js"
   },
   "peerDependencies": {
     "grunt": "~0.4.1"
   },
   "dependencies": {
-    "eslint": "^1.1.0",
     "grunt": "^0.4.5",
-    "jest-cli": "^0.4.18",
     "jsftp": "^1.5.2"
+  },
+  "devDependencies": {
+    "eslint": "^1.1.0",
+    "chai": "^3.2.0",
+    "mocha": "^2.3.0"
   },
   "keywords": [
     "gruntplugin",
     "grunt-ftp-push",
-    "ftp"
+    "ftp",
+    "jsftp",
+    "mocha",
+    "chai"
   ]
 }

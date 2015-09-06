@@ -2,8 +2,8 @@
 * @author Robert Winterbottom <Robbie.Winterbottom@gmail.com>
 * Description:
 * 	- Push a file called Test.txt to the root of remote host and then immediately delete it
-* 	- OVH.com is erroring out, receiving a pasv command way too early when 
-			uploading multiple files. Repeat this test numerous times while 
+* 	- OVH.com is erroring out, receiving a pasv command way too early when
+			uploading multiple files. Repeat this test numerous times while
 			running jsftp in debug mode to try to recreate the error.
 
 * Directions:
@@ -23,8 +23,6 @@ var defaults = {
 var iterations = 25;
 
 describe('Grunt Plugin - FTP Push - JSFTP test for troublesome hosts', function () {
-
-	jasmine.getEnv().defaultTimeoutInterval = 10000;
 
 	var grunt = require('grunt'),
 			Ftp = require('jsftp'),
@@ -57,12 +55,13 @@ describe('Grunt Plugin - FTP Push - JSFTP test for troublesome hosts', function 
 
 		var filename = 'Test.txt';
 		var localPath = [__dirname, '/', filename].join('');
-		// If you don't want to push to root directory, edit remotePath, 
+		// If you don't want to push to root directory, edit remotePath,
 		// make sure dirs are created though, this test does not create directories
 		var remotePath = filename;
 		var buffer = grunt.file.read(localPath, { encoding: null });
+		var complete, run;
 
-		function complete() {
+		complete = function () {
 			if (--iterations > 0) {
 				run();
 			} else {
@@ -70,7 +69,7 @@ describe('Grunt Plugin - FTP Push - JSFTP test for troublesome hosts', function 
 			}
 		}
 
-		function run() {
+		run = function() {
 			server.put(buffer, remotePath, function (err) {
 				expect(err).toBe(false);
 				server.raw.dele(remotePath, function (delErr) {
