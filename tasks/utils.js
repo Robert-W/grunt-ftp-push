@@ -80,7 +80,7 @@ var utils = {
           destination = path.join(basePath, destination);
         }
         // If a files destination is not in the array, add the file, this matched on destination
-        if (!utils.arrayContainsFile(filePaths, destination))  {
+        if (!utils.arrayContainsFile(filePaths, destination)) {
           filePaths.push({
             src: filepath,
             dest: destination

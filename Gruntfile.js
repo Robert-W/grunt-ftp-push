@@ -20,8 +20,8 @@ module.exports = function(grunt) {
           port: 21
         },
         files: [ // Enable Dynamic Expansion, Src matches are relative to this path, Actual Pattern(s) to match
-          {expand: true, cwd: 'test', src: ['**/*']},
-          {expand: true, cwd: 'tasks', src: ['**/*'], dest: './' }
+          {expand: true, cwd: 'files/nested/another', src: ['*.js'], dest: './files/js'},
+          {expand: true, cwd: './', src: ['files/js/**/*.js']}
         ]
       },
 
@@ -34,7 +34,7 @@ module.exports = function(grunt) {
           debug: true // Show JSFTP Debugging information
         },
         files: [
-          {expand: true, cwd: './', src: ['test/nested/another/sample.js']}
+          {expand: true, cwd: './', src: ['files/nested/another/sample.js']}
         ]
       }
 
