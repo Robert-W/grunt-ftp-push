@@ -21,7 +21,7 @@ var utils = {
     if (typeof cwd === 'string' && filepath.substr(0, cwd.length) === cwd) {
       filepath = filepath.substr(cwd.length);
     }
-    return filepath;
+    return path.posix.normalize(filepath);
   },
 
   /**
@@ -39,7 +39,7 @@ var utils = {
 
     filePaths.forEach(function (filePath) {
       if (filePath.length !== 1) {
-        filePath = path.normalize(filePath);
+        filePath = path.posix.normalize(filePath);
         while((match = regex.exec(filePath)) !== null) {
           partial = filePath.slice(0, match.index);
           if (directoryPaths.indexOf(partial) < 0 && partial !== '') {
@@ -70,14 +70,14 @@ var utils = {
       // For each src file we have
       file.src.forEach(function (filepath) {
         // Make sure the path is normalized
-        filepath = path.normalize(filepath);
+        filepath = path.posix.normalize(filepath);
         // Trim the cwd from the path to prepare it for the destination
         destination = utils.trimCwd(filepath, file.orig.cwd);
         // Set up the relative destination if one is provided
         if (file.orig.dest) {
-          destination = path.join(basePath, file.orig.dest, destination);
+          destination = path.posix.join(basePath, file.orig.dest, destination);
         } else {
-          destination = path.join(basePath, destination);
+          destination = path.posix.join(basePath, destination);
         }
         // If a files destination is not in the array, add the file, this matched on destination
         if (!utils.arrayContainsFile(filePaths, destination)) {
