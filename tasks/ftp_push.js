@@ -1,6 +1,6 @@
 /*
- * grunt-ftp
- * https://github.com/Robert-W/grunt-ftp
+ * grunt-ftp-push
+ * https://github.com/Robert-W/grunt-ftp-push
  *
  * Copyright (c) 2013 Robert Winterbottom
  * Licensed under the MIT license.
