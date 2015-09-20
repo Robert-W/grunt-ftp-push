@@ -164,6 +164,7 @@ Please add unit tests in the root of the test folder for any new or changed func
 
 ## Release History
 <ul>
+<li>2015/09/03 - v 0.4.2 Using path.posix instead of just path, updated tasks to pass linting, added local ftp-server for more testing.</li>
 <li>2015/09/03 - v 0.4.1 Swapped out jest for mocha and chai due to windows compatability issues.</li>
 <li>2015/09/03 - v 0.4.0 Several minor bug fixes, added unit tests, code cleanup, and now using nodes path module.</li>
 <li>2015/06/25 - v 0.3.6 Merged updates from <a href='https://github.com/Robert-W/grunt-ftp-push/pull/25'>#25 - De-Duplicate destination directories</a>.</li>

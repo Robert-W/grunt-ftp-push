@@ -36,6 +36,19 @@ module.exports = function(grunt) {
         files: [
           {expand: true, cwd: './', src: ['files/nested/another/sample.js']}
         ]
+      },
+
+      local: {
+        options: {
+          host: '127.0.0.1',
+          dest: './',
+          username: 'local_user',
+          password: '12345',
+          port: 3334
+        },
+        files: [
+          {expand: true, cwd: './', src: ['files/js/**/*.js']}
+        ]
       }
 
     }
@@ -47,5 +60,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['ftp_push:default']);
   grunt.registerTask('sample', ['ftp_push:sample']);
+  grunt.registerTask('local', ['ftp_push:local']);
 
 };

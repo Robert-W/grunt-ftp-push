@@ -8,7 +8,7 @@
 
 * Directions:
 * 1) Enter your username, password, and host (use undefined for anonymous logins)
-* 2) npm run jsftp-test
+* 2) npm run ovh-test
 */
 
 var defaults = {
@@ -24,7 +24,8 @@ var iterations = 25;
 
 describe('Grunt Plugin - FTP Push - JSFTP test for troublesome hosts', function () {
 
-	var grunt = require('grunt'),
+	var expect = require('chai').expect,
+			grunt = require('grunt'),
 			Ftp = require('jsftp'),
 			server;
 
@@ -71,9 +72,9 @@ describe('Grunt Plugin - FTP Push - JSFTP test for troublesome hosts', function 
 
 		run = function() {
 			server.put(buffer, remotePath, function (err) {
-				expect(err).toBe(false);
+				expect(err).to.be.false;
 				server.raw.dele(remotePath, function (delErr) {
-					expect(delErr).toBe(null);
+					expect(delErr).to.be.null;
 					complete();
 				});
 			});
