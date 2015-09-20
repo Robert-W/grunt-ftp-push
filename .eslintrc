@@ -51,7 +51,6 @@
     "no-underscore-dangle": 2,
     "no-use-before-define": 2,
     "no-with": 2,
-    "camelcase": 2,
     "comma-spacing": 2,
     "consistent-return": 2,
     "curly": [2, "all"],
