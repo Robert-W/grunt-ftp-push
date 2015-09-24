@@ -164,23 +164,24 @@ Please add unit tests in the root of the test folder for any new or changed func
 
 ## Release History
 <ul>
+<li>2015/09/24 - v 0.4.3 Merged updates from [#36 - Use path.posix for ftp paths](https://github.com/Robert-W/grunt-ftp-push/pull/36) for path operations not already using posix.</li>
 <li>2015/09/03 - v 0.4.2 Using path.posix instead of just path, updated tasks to pass linting, added local ftp-server for more testing.</li>
 <li>2015/09/03 - v 0.4.1 Swapped out jest for mocha and chai due to windows compatability issues.</li>
 <li>2015/09/03 - v 0.4.0 Several minor bug fixes, added unit tests, code cleanup, and now using nodes path module.</li>
-<li>2015/06/25 - v 0.3.6 Merged updates from <a href='https://github.com/Robert-W/grunt-ftp-push/pull/25'>#25 - De-Duplicate destination directories</a>.</li>
-<li>2015/05/20 - v 0.3.4 Merged fix for empty folder structure being created. <a href='https://github.com/Robert-W/grunt-ftp-push/pull/24'>#24</a></li>
+<li>2015/06/25 - v 0.3.6 Merged updates from [#25 - De-Duplicate destination directories](https://github.com/Robert-W/grunt-ftp-push/pull/25).</li>
+<li>2015/05/20 - v 0.3.4 Merged fix for empty folder structure being created. [#24](https://github.com/Robert-W/grunt-ftp-push/pull/24)</li>
 <li>2015/01/15 - v 0.3.2  Added debug option, updated readme, updated jsftp to 1.3.9</li>
 <li>2015/01/13 - v 0.3.0  Minor typo caused patch to work incorrectly</li>
 <li>2015/01/13 - v 0.2.8  Patch for deeply nested files throwing errors</li>
-<li>2014/12/22 - v 0.2.6  Added in option for keepAlive, default is 60000 (60 seconds), added in option for multiple destinations specified for each file object provided, if no dest is provided, it defaults to the dest specified in the options <a href='https://github.com/Robert-W/grunt-ftp-push/issues/4'>#4</a> & <a href='https://github.com/Robert-W/grunt-ftp-push/issues/13'>#13</a>.
+<li>2014/12/22 - v 0.2.6  Added in option for keepAlive, default is 60000 (60 seconds), added in option for multiple destinations specified for each file object provided, if no dest is provided, it defaults to the dest specified in the options [#4](https://github.com/Robert-W/grunt-ftp-push/issues/4) & [#13](https://github.com/Robert-W/grunt-ftp-push/issues/13).
 </li>
 <li>2014/07/24 - v 0.2.4  Fixed issue introduced with latest fix, added fix to remove cwd from path of file being pushed so they are pushed to the expected location.  Other minor fixes and enhancements.
 </li>
 <li>2014/07/20 - v 0.2.2
 <ul>
-<li>Fixes for getting credentials correctly.</li><li>Creating directories correctly from dest if they don't exist.</li><li>Handling '/' appropriately in all cases.</li><li>Better error handling, restructured code, and more detailed comments.</li><li>Upgraded to latest jsftp(v 1.3.1). <a target='_blank' href='https://github.com/Robert-W/grunt-ftp-push/issues/8'>#8</a></li><li>Updated documentation for username and password.</li>
+<li>Fixes for getting credentials correctly.</li><li>Creating directories correctly from dest if they don't exist.</li><li>Handling '/' appropriately in all cases.</li><li>Better error handling, restructured code, and more detailed comments.</li><li>Upgraded to latest jsftp(v 1.3.1). [#8](https://github.com/Robert-W/grunt-ftp-push/issues/8)</li><li>Updated documentation for username and password.</li>
 </ul>
 </li>
-<li>2014/07/10 - v 0.2.1 Fixed issue from latest patch where it was not correctly creating directories in provided filepaths from patterns. As well as <a href='https://github.com/Robert-W/grunt-ftp-push/issues/7' target='_blank'>#7</a> & <a href='https://github.com/Robert-W/grunt-ftp-push/issues/9' target='_blank'>#9</a>&nbsp;</li>
-<li>2014/07/03 - v 0.2.0 &nbsp;<a href='https://github.com/Robert-W/grunt-ftp-push/issues/6' target='_blank'>#6</a>&nbsp; Fixed issue with pushing files from root directory when cwd is set to '.' or './'</li>
+<li>2014/07/10 - v 0.2.1 Fixed issue from latest patch where it was not correctly creating directories in provided filepaths from patterns. As well as [#7](https://github.com/Robert-W/grunt-ftp-push/issues/7) & [#9](https://github.com/Robert-W/grunt-ftp-push/issues/9)&nbsp;</li>
+<li>2014/07/03 - v 0.2.0 &nbsp;[#6](https://github.com/Robert-W/grunt-ftp-push/issues/6)&nbsp; Fixed issue with pushing files from root directory when cwd is set to '.' or './'</li>
 </ul>
