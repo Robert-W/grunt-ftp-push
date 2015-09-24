@@ -153,7 +153,7 @@ module.exports = function (grunt) {
     });
 
     // Basepath of where to push
-    basepath = path.normalize(options.dest);
+    basepath = path.posix.normalize(options.dest);
     // Get Credentials
     creds = getCredentials(options);
     // Get list of file objects to push, containing src & path properties
