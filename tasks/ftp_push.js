@@ -183,7 +183,12 @@ module.exports = function (grunt) {
       if (err) {
         grunt.fail.fatal(messages.authFailure(creds.username));
       } else {
-        grunt.log.ok(messages.authSuccess(creds.username));
+        if(gruntOptions.hideCredentialInLog){
+          grunt.log.ok(messages.authSuccess("<provided-username>"));
+        }
+        else{
+          grunt.log.ok(messages.authSuccess(creds.username));
+        }
       }
 
       // Push directories first
