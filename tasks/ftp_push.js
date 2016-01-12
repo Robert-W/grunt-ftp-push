@@ -183,8 +183,8 @@ module.exports = function (grunt) {
       if (err) {
         grunt.fail.fatal(messages.authFailure(creds.username));
       } else {
-        if(gruntOptions.hideCredentialInLog){
-          grunt.log.ok(messages.authSuccess("<provided-username>"));
+        if(options.hideCredentialInLog){
+          grunt.log.ok(messages.authSuccess('<provided-username>'));
         }
         else{
           grunt.log.ok(messages.authSuccess(creds.username));
