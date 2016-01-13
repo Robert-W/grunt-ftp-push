@@ -126,7 +126,8 @@ module.exports = function (grunt) {
     options = this.options({
       autoReconnect: true,
       reconnectLimit: 3,
-      keepAlive: 60000
+      keepAlive: 60000,
+      hideCredentials: false
     });
 
     // Tell Grunt not to finish until my async methods are completed, calling done() to finish
@@ -179,11 +180,13 @@ module.exports = function (grunt) {
 
     // Authenticate with the server and begin pushing files up
     server.auth(creds.username, creds.password, function(err) {
+      // Use <username> in out put if they chose to hide username
+      var usernameForOutput = options.hideCredentials ? '<username>' : 'creds.username';
       // If there is an error, just fail
       if (err) {
-        grunt.fail.fatal(messages.authFailure(creds.username));
+        grunt.fail.fatal(messages.authFailure(usernameForOutput));
       } else {
-        grunt.log.ok(messages.authSuccess(creds.username));
+        grunt.log.ok(messages.authSuccess(usernameForOutput));
       }
 
       // Push directories first
