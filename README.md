@@ -108,6 +108,13 @@ Required: false
 
 Enable debug mode for the JSFTP module to allow for verbose console messages.
 
+#### hideCredentials
+Type: `Boolean`<br>
+Default: `true`<br>
+Required: false
+
+Does not show credentials in the console output. NOTE: debug mode runs jsftp in debug mode and this has no affect on that.
+
 ### Usage Examples
 
 #### Sample .ftpauth file
