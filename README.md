@@ -171,6 +171,7 @@ Please add unit tests in the root of the test folder for any new or changed func
 
 ## Release History
 <ul>
+<li>2016/01/13 - v 0.4.4 Added code similar to PR [#41 Hide Credentials](https://github.com/Robert-W/grunt-ftp-push/pull/41) as a way to hide username in output for CI.</li>
 <li>2015/09/24 - v 0.4.3 Merged updates from [#36 - Use path.posix for ftp paths](https://github.com/Robert-W/grunt-ftp-push/pull/36) for path operations not already using posix.</li>
 <li>2015/09/03 - v 0.4.2 Using path.posix instead of just path, updated tasks to pass linting, added local ftp-server for more testing.</li>
 <li>2015/09/03 - v 0.4.1 Swapped out jest for mocha and chai due to windows compatibility issues.</li>
