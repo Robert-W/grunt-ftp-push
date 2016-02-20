@@ -29,7 +29,7 @@
     "ovh-test": "mocha ./test/jsftp/jsftpSpec.js"
   },
   "peerDependencies": {
-    "grunt": "~0.4.1"
+    "grunt": ">=0.4.0"
   },
   "dependencies": {
     "grunt": "^0.4.5",
