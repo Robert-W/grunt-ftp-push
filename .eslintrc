@@ -10,6 +10,7 @@
     "spyOn": true,
     "expect": true,
     "describe": true,
+    "xdescribe": true,
     "afterEach": true,
     "beforeEach": true
   },

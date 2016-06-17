@@ -1,4 +1,5 @@
 var path = require('path');
+var fs = require('fs');
 
 var utils = {
   /**
@@ -111,6 +112,27 @@ var utils = {
   */
   getDestinations: function (files) {
     return files.map(function (file) { return file.dest; });
+  },
+
+  getChangedFiles: function (cache, fpaths) {
+    var stats, mtime;
+
+    var changes = fpaths.filter(function (filepath) {
+      stats = fs.statSync(filepath);
+      mtime = new Date(stats.mtime).getTime();
+
+      if (cache[filepath] === undefined || cache[filepath] < mtime) {
+        cache[filepath] = mtime;
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+    return {
+      cache: cache,
+      files: changes
+    };
   }
 
 };
