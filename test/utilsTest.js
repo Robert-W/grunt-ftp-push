@@ -132,3 +132,35 @@ describe('ftp_push - utils.arrayContainsFile', function () {
   });
 
 });
+
+describe('ftp_push - utils.getChangedFiles', function () {
+  'use strict';
+  /**
+  * TODO:
+  * - Add documentation in README
+  * - Add documentation in Code
+  * - Make option so this feature can be turned on or off
+  * - Make this feature turned on by default
+  */
+
+  it('should write each file\'s mtime in the cache', function () {
+    var index = {};
+    var fpaths = ['.editorconfig', '.gitignore', 'LICENSE-MIT'];
+    var files = utils.getChangedFiles(index, fpaths).files;
+    var knownMTimes = {
+      '../.editorconfig': 1441828996000,
+      '../.gitignore': 1441828996000,
+      '../LICENSE-MIT': 1439475864000
+    };
+
+    expect(files.length).to.equal(fpaths.length);
+    expect(files.every(function (file, i) { return file === fpaths[i]; }));
+    expect(files.every(function (file) { return index[file] === knownMTimes[file]; }));
+  });
+
+  it('should return a list of paths with new mtime\'s and the updated cache', function () {
+
+  });
+
+
+});
