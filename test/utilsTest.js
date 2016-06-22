@@ -2,6 +2,7 @@ var fileMocks = require('./mocks/fileObjects');
 var mocks = require('./mocks/utilMocks');
 var utils = require('../tasks/utils');
 var expect = require('chai').expect;
+var fs = require('fs');
 
 describe('ftp_push - utils.optionsAreValid', function () {
   'use strict';
@@ -144,9 +145,9 @@ describe('ftp_push - utils.getChangedFiles', function () {
   */
 
   it('should write each file\'s mtime in the cache', function () {
-    var index = {};
+    var cache = {};
     var fpaths = ['.editorconfig', '.gitignore', 'LICENSE-MIT'];
-    var files = utils.getChangedFiles(index, fpaths).files;
+    var files = utils.getChangedFiles(cache, fpaths).files;
     var knownMTimes = {
       '../.editorconfig': 1441828996000,
       '../.gitignore': 1441828996000,
@@ -155,10 +156,40 @@ describe('ftp_push - utils.getChangedFiles', function () {
 
     expect(files.length).to.equal(fpaths.length);
     expect(files.every(function (file, i) { return file === fpaths[i]; }));
-    expect(files.every(function (file) { return index[file] === knownMTimes[file]; }));
+    expect(files.every(function (file) { return cache[file] === knownMTimes[file]; }));
   });
 
-  it('should return a list of paths with new mtime\'s and the updated cache', function () {
+  it('should return a list of paths with new mtime\'s and the updated cache', function (done) {
+    var cache = {};
+    // These first three should not change, add a test file, currently needs to be manually updated
+    var fpaths = ['.editorconfig', '.gitignore', 'LICENSE-MIT', 'files/js/alert.js'];
+    var updates = utils.getChangedFiles(cache, fpaths);
+    var newTimestamp = Date.now();
+
+    // Save the original times
+    var times = {
+      '.editorconfig': updates.cache['.editorconfig'],
+      '.gitignore': updates.cache['.gitignore'],
+      'LICENSE-MIT': updates.cache['LICENSE-MIT'],
+      'files/js/alert.js': updates.cache['files/js/alert.js']
+    };
+
+    // We should have four files since none are present in the cache
+    expect(updates.files.length).to.equal(fpaths.length);
+    // Let's modify the alert.js file
+    fs.utimes('files/js/alert.js', newTimestamp, newTimestamp, function () {
+      // Now get the updates
+      updates = utils.getChangedFiles(updates.cache, fpaths);
+      // and see if we only have a single file now
+      expect(updates.files.length).to.equal(1);
+      // and see if the cache was properly updated
+      expect(updates.cache['files/js/alert.js']).to.not.equal(times['files/js/alert.js']);
+      // These were not modified so the cache should be the same
+      expect(updates.cache['.editorconfig']).to.equal(times['.editorconfig']);
+      expect(updates.cache['.gitignore']).to.equal(times['.gitignore']);
+      expect(updates.cache['LICENSE-MIT']).to.equal(times['LICENSE-MIT']);
+      done();
+    });
 
   });
 

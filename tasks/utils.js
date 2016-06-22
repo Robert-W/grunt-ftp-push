@@ -114,6 +114,12 @@ var utils = {
     return files.map(function (file) { return file.dest; });
   },
 
+  /**
+  * @description
+  * @param {object}
+  * @param {string[]}
+  * @return {object}
+  */
   getChangedFiles: function (cache, fpaths) {
     var stats, mtime;
 
