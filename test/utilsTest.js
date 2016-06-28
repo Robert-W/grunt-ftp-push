@@ -1,6 +1,7 @@
 var fileMocks = require('./mocks/fileObjects');
 var mocks = require('./mocks/utilMocks');
 var utils = require('../tasks/utils');
+var cache = require('../tasks/cache');
 var expect = require('chai').expect;
 var fs = require('fs');
 
@@ -134,7 +135,7 @@ describe('ftp_push - utils.arrayContainsFile', function () {
 
 });
 
-describe('ftp_push - utils.getChangedFiles', function () {
+describe('ftp_push - utils.getChangesAndUpdateCache', function () {
   'use strict';
   /**
   * TODO:
@@ -144,26 +145,40 @@ describe('ftp_push - utils.getChangedFiles', function () {
   * - Make this feature turned on by default
   */
 
+  beforeEach(function () {
+    // Reset the cache
+    cache.set({});
+  });
+
   it('should write each file\'s mtime in the cache', function () {
-    var cache = {};
-    var fpaths = ['.editorconfig', '.gitignore', 'LICENSE-MIT'];
-    var files = utils.getChangedFiles(cache, fpaths).files;
+    var localCache = cache.get();
+    var fobjects = [
+      { src: '.editorconfig', dest: '.editorconfig'},
+      { src: '.gitignore', dest: '.gitignore'},
+      { src: 'LICENSE-MIT', dest: 'LICENSE-MIT'}
+    ];
+    var files = utils.updateCacheGetChanges(localCache, fobjects).files;
     var knownMTimes = {
       '../.editorconfig': 1441828996000,
       '../.gitignore': 1441828996000,
       '../LICENSE-MIT': 1439475864000
     };
 
-    expect(files.length).to.equal(fpaths.length);
-    expect(files.every(function (file, i) { return file === fpaths[i]; }));
+    expect(files.length).to.equal(fobjects.length);
+    expect(files.every(function (file, i) { return file === fobjects[i].src; }));
     expect(files.every(function (file) { return cache[file] === knownMTimes[file]; }));
   });
 
   it('should return a list of paths with new mtime\'s and the updated cache', function (done) {
-    var cache = {};
+    var localCache = cache.get();
     // These first three should not change, add a test file, currently needs to be manually updated
-    var fpaths = ['.editorconfig', '.gitignore', 'LICENSE-MIT', 'files/js/alert.js'];
-    var updates = utils.getChangedFiles(cache, fpaths);
+    var fobjects = [
+      { src: '.editorconfig', dest: '.editorconfig'},
+      { src: '.gitignore', dest: '.gitignore'},
+      { src: 'LICENSE-MIT', dest: 'LICENSE-MIT'},
+      { src: 'files/js/alert.js', dest: 'files/js/alert.js'}
+    ];
+    var updates = utils.updateCacheGetChanges(localCache, fobjects);
     var newTimestamp = Date.now();
 
     // Save the original times
@@ -174,12 +189,15 @@ describe('ftp_push - utils.getChangedFiles', function () {
       'files/js/alert.js': updates.cache['files/js/alert.js']
     };
 
+    // Update the cache
+    cache.set(updates.cache);
+
     // We should have four files since none are present in the cache
-    expect(updates.files.length).to.equal(fpaths.length);
+    expect(updates.files.length).to.equal(fobjects.length);
     // Let's modify the alert.js file
     fs.utimes('files/js/alert.js', newTimestamp, newTimestamp, function () {
       // Now get the updates
-      updates = utils.getChangedFiles(updates.cache, fpaths);
+      updates = utils.updateCacheGetChanges(cache.get(), fobjects);
       // and see if we only have a single file now
       expect(updates.files.length).to.equal(1);
       // and see if the cache was properly updated

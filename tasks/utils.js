@@ -115,20 +115,20 @@ var utils = {
   },
 
   /**
-  * @description
-  * @param {object}
-  * @param {string[]}
-  * @return {object}
+  * @description Takes a cache and an array of file objects. Updates the cache and returns files that have been modified
+  * @param {object} cache - Cache to update, simple Dictionary of type <string,string>(filename,mtime)
+  * @param {object[]} files - Array of file objects found by grunt
+  * @return {object<object<string, string>, object[]>} - returns the updated caches and a files object array containing changed files
   */
-  getChangedFiles: function (cache, fpaths) {
+  updateCacheGetChanges: function (cache, files) {
     var stats, mtime;
 
-    var changes = fpaths.filter(function (filepath) {
-      stats = fs.statSync(filepath);
+    var changes = files.filter(function (file) {
+      stats = fs.statSync(file.src);
       mtime = new Date(stats.mtime).getTime();
 
-      if (cache[filepath] === undefined || cache[filepath] < mtime) {
-        cache[filepath] = mtime;
+      if (cache[file.src] === undefined || cache[file.src] < mtime) {
+        cache[file.src] = mtime;
         return true;
       } else {
         return false;
