@@ -179,7 +179,7 @@ describe('ftp_push - utils.getChangesAndUpdateCache', function () {
       { src: 'files/js/alert.js', dest: 'files/js/alert.js'}
     ];
     var updates = utils.updateCacheGetChanges(localCache, fobjects);
-    var newTimestamp = Date.now();
+    var newTimestamp = new Date(Date.now());
 
     // Save the original times
     var times = {
@@ -201,7 +201,7 @@ describe('ftp_push - utils.getChangesAndUpdateCache', function () {
       // and see if we only have a single file now
       expect(updates.files.length).to.equal(1);
       // and see if the cache was properly updated
-      expect(updates.cache['files/js/alert.js']).to.not.equal(times['files/js/alert.js']);
+      expect(updates.cache['files/js/alert.js']).to.be.above(times['files/js/alert.js']);
       // These were not modified so the cache should be the same
       expect(updates.cache['.editorconfig']).to.equal(times['.editorconfig']);
       expect(updates.cache['.gitignore']).to.equal(times['.gitignore']);
