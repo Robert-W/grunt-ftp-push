@@ -15,7 +15,7 @@ module.exports = function(grunt) {
       default: {
         options: {
           authKey: 'serverA',
-          host: 'staging.blueraster.com',
+          host: 'sample.server.com',
           dest: '/html/test/',
           port: 21
         },
