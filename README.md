@@ -108,6 +108,13 @@ Required: false
 
 Enable debug mode for the JSFTP module to allow for verbose console messages.
 
+#### incrementalUpdates
+Type: `Boolean`<br>
+Default: `true`<br>
+Required: false
+
+Allows for files to be incrementally pushed based on their modified times.
+
 #### hideCredentials
 Type: `Boolean`<br>
 Default: `true`<br>
@@ -171,6 +178,7 @@ Please add unit tests in the root of the test folder for any new or changed func
 
 ## Release History
 <ul>
+<li>2016/07/07 - v 1.1.0 New feature, added incremental updates.</li>
 <li>2016/03/28 - v 1.0.0 Updated release version to 1.0.0 since this has been stable for a little while.</li>
 <li>2016/01/13 - v 0.4.4 Added code similar to PR [#41 Hide Credentials](https://github.com/Robert-W/grunt-ftp-push/pull/41) as a way to hide username in output for CI.</li>
 <li>2015/09/24 - v 0.4.3 Merged updates from [#36 - Use path.posix for ftp paths](https://github.com/Robert-W/grunt-ftp-push/pull/36) for path operations not already using posix.</li>

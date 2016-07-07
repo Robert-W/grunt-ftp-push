@@ -6,6 +6,7 @@
  * Licensed under the MIT license.
  */
 var messages = require('./messages');
+var cache = require('./cache');
 var utils = require('./utils');
 var path = require('path');
 var Ftp = require('jsftp');
@@ -118,16 +119,18 @@ module.exports = function (grunt) {
   grunt.registerMultiTask('ftp_push', 'Transfer files using FTP.', function() {
 
     var destinations,
+        updated,
         files,
         creds,
         dirs;
 
     // Merge task-specific and/or target-specific options with these defaults.
     options = this.options({
-      autoReconnect: true,
-      reconnectLimit: 3,
-      keepAlive: 60000,
-      hideCredentials: false
+      incrementalUpdates: true,
+      // autoReconnect: true,
+      // reconnectLimit: 3,
+      hideCredentials: false,
+      keepAlive: 60000
     });
 
     // Tell Grunt not to finish until my async methods are completed, calling done() to finish
@@ -159,6 +162,11 @@ module.exports = function (grunt) {
     creds = getCredentials(options);
     // Get list of file objects to push, containing src & path properties
     files = utils.getFilePaths(basepath, this.files);
+    // Filter these files based on whether or not they have been updated since the last push
+    updated = utils.updateCacheGetChanges(cache.get(), files);
+    // set the cache and grab the updated files list
+    files = updated.files;
+    cache.set(updated.cache);
     // Get a list of the required directories to push so the files can be uploaded
     // getDirectoryPaths takes an array of strings, get a string[] of destinations
     destinations = utils.getDestinations(files);
@@ -170,6 +178,9 @@ module.exports = function (grunt) {
       debugMode: options.debug || false
     });
 
+    // set keep alive
+    server.keepAlive(options.keepAlive);
+
     // Log if in debug mode
     if (options.debug) {
       server.on('jsftp_debug', function(eventType, data) {
@@ -178,17 +189,22 @@ module.exports = function (grunt) {
       });
     }
 
+    //- If there are no files to push, bail now
+    if (options.incrementalUpdates && dirs && dirs.length === 0) {
+      console.log(messages.noNewFiles);
+      done();
+    }
+
     // Authenticate with the server and begin pushing files up
     server.auth(creds.username, creds.password, function(err) {
       // Use <username> in out put if they chose to hide username
-      var usernameForOutput = options.hideCredentials ? '<username>' : 'creds.username';
+      var usernameForOutput = options.hideCredentials ? '<username>' : creds.username;
       // If there is an error, just fail
       if (err) {
         grunt.fail.fatal(messages.authFailure(usernameForOutput));
       } else {
         grunt.log.ok(messages.authSuccess(usernameForOutput));
       }
-
       // Push directories first
       pushDirectories(dirs, function () {
         // Directories have successfully been pushed, now upload files
