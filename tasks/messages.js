@@ -3,6 +3,7 @@ module.exports = {
   anonymousLogin: 'Attempting anonymous login.',
   connectionClosed: 'FTP connection closed!',
   noNewFiles: 'No new files to push. If you want to force push all your files, set incrementalUpdates to true in your options.',
+  noFiles: 'No files detected. Pleade check your configuration.',
   directoryCreated: function (directory) { return directory + ' directory created successfully.'; },
   fileTransferFail: function (file, err) { return file + ' failed to transfer because ' + err; },
   fileTransferSuccess: function (file) { return file + ' transferred successfully.'; },

@@ -143,6 +143,13 @@ module.exports = function (grunt) {
       return;
     }
 
+    // If there are no files provided, bail out with a warning
+    if (this.files.length === 0) {
+      grunt.log.warn(messages.noFiles);
+      done(false);
+      return;
+    }
+
     // Remove directories and invalid paths from this.files
     this.files.forEach(function (file) {
       file.src = file.src.filter(function (filepath) {
@@ -162,11 +169,14 @@ module.exports = function (grunt) {
     creds = getCredentials(options);
     // Get list of file objects to push, containing src & path properties
     files = utils.getFilePaths(basepath, this.files);
-    // Filter these files based on whether or not they have been updated since the last push
-    updated = utils.updateCacheGetChanges(cache.get(), files);
-    // set the cache and grab the updated files list
-    files = updated.files;
-    cache.set(updated.cache);
+    //- Only get changes if incrementalUpdates is on
+    if (options.incrementalUpdates) {
+      // Filter these files based on whether or not they have been updated since the last push
+      updated = utils.updateCacheGetChanges(cache.get(), files);
+      // set the cache and grab the updated files list
+      files = updated.files;
+      cache.set(updated.cache);
+    }
     // Get a list of the required directories to push so the files can be uploaded
     // getDirectoryPaths takes an array of strings, get a string[] of destinations
     destinations = utils.getDestinations(files);
