@@ -178,6 +178,7 @@ Please add unit tests in the root of the test folder for any new or changed func
 
 ## Release History
 <ul>
+<li>2016/11/23 - v 1.2.0 Updated Grunt version to 1.0.0</li>
 <li>2016/07/07 - v 1.1.0 New feature, added incremental updates.</li>
 <li>2016/03/28 - v 1.0.0 Updated release version to 1.0.0 since this has been stable for a little while.</li>
 <li>2016/01/13 - v 0.4.4 Added code similar to PR [#41 Hide Credentials](https://github.com/Robert-W/grunt-ftp-push/pull/41) as a way to hide username in output for CI.</li>
