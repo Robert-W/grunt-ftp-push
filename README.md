@@ -3,6 +3,9 @@
 > Deploy your files to a FTP server <br>
 > Notice: Currently SFTP is not supported
 
+## THIS REPO IS NO LONGER GOING TO BE MAINTAINED
+> I am no longer using Grunt and do not have time to maintain this anymore. If anyone is interested in maintaining this and taking ownership, please open an issue and let me know.
+
 ## Getting Started
 This plugin requires Grunt `~0.4.1`
 
