@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "grunt": "^1.0.0",
-    "jsftp": "^1.5.2"
+    "jsftp": "^2.0.0"
   },
   "devDependencies": {
     "chai": "^3.2.0",
