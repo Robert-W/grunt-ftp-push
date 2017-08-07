@@ -45,7 +45,7 @@ module.exports = function (grunt) {
     var index = 0;
 
     /**
-    * Recursive helper used as callback for server.raw.mkd
+    * Recursive helper used as callback for server.raw(mkd)
     * @param {error} err - Error message if something went wrong
     */
     var processDir = function processDir (err) {
@@ -60,7 +60,7 @@ module.exports = function (grunt) {
       ++index;
       // If there is more directories to process then keep going
       if (index < directories.length) {
-        server.raw.mkd(directories[index], processDir);
+        server.raw('mkd', directories[index], processDir);
       } else {
         callback();
       }
@@ -68,7 +68,7 @@ module.exports = function (grunt) {
 
     // Start processing dirs or end if none are present
     if (index < directories.length) {
-      server.raw.mkd(directories[index], processDir);
+      server.raw('mkd', directories[index], processDir);
     } else {
       callback();
     }
@@ -83,7 +83,7 @@ module.exports = function (grunt) {
         file = files[index];
 
     /**
-    * Recursive helper used as callback for server.raw.put
+    * Recursive helper used as callback for server.raw(put)
     * @param {error} err - Error message if something went wrong
     */
     var processFile = function processFile (err) {
@@ -100,7 +100,7 @@ module.exports = function (grunt) {
         server.put(grunt.file.read(file.src, { encoding: null }), file.dest, processFile);
       } else {
         // Close the connection, we are complete
-        server.raw.quit(function(quitErr) {
+        server.raw('quit', function(quitErr) {
           if (quitErr) {
             grunt.log.error(quitErr);
             done(false);
