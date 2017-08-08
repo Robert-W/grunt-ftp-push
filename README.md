@@ -1,10 +1,10 @@
-# grunt-ftp-push  [![Build Status](https://travis-ci.org/Robert-W/grunt-ftp-push.svg?branch=0.4.0)](https://travis-ci.org/Robert-W/grunt-ftp-push)
+# grunt-ftp-push  [![Build Status](https://travis-ci.org/Robert-W/grunt-ftp-push.svg?branch=master)](https://travis-ci.org/Robert-W/grunt-ftp-push)
 
 > Deploy your files to a FTP server <br>
 > Notice: Currently SFTP is not supported
 
-## THIS REPO IS NO LONGER MAINTAINED
-> I am no longer using Grunt and do not have time to maintain this anymore. If anyone is interested in maintaining this and taking ownership, please open an issue and let me know.
+## This repo is publically maintained
+> The orignal owner is no longer using Grunt and does not have time to maintain this anymore. If anyone is interested in maintaining this and taking ownership, please open an issue and let us know that you'd like to be added as a contributor.
 
 ## Getting Started
 This plugin requires Grunt `~0.4.1`
@@ -88,7 +88,20 @@ Type: `String`<br>
 Default: `None`<br>
 Required: false
 
-If no authKey and .ftpauth file is provided, you can specify username here.
+If no authKey and .ftpauth file is provided, you can specify username here. 
+
+You also have the option of specifying the username in your run command. This is especially useful when
+you have multiple users on your project, or you don't wish to store the credentials. 
+
+Gruntfile.js:
+```js
+username: grunt.option('ftp-user') || 'anonymous',
+```
+
+Command line:
+```shell
+grunt --ftp-user=myUser
+```
 
 #### password
 Type: `String`<br>
@@ -96,6 +109,19 @@ Default: `None`<br>
 Required: false
 
 If no authKey and .ftpauth file is provided, you can specify password here.
+
+You also have the option of specifying the password in your run command. This is especially useful when
+you have multiple users on your project, or you don't wish to store the credentials. 
+
+Gruntfile.js:
+```js
+password: grunt.option('ftp-pass') || '@anonymous',
+```
+
+Command line:
+```shell
+grunt --ftp-pass=myPassWord1
+```
 
 #### keepAlive
 Type: `Number`<br>
