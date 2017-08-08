@@ -68,7 +68,7 @@ describe('Grunt Plugin - FTP Push - JSFTP test for troublesome hosts', function 
 			} else {
 				done();
 			}
-		}
+		};
 
 		run = function() {
 			server.put(buffer, remotePath, function (err) {
@@ -78,7 +78,7 @@ describe('Grunt Plugin - FTP Push - JSFTP test for troublesome hosts', function 
 					complete();
 				});
 			});
-		}
+		};
 
 		run();
 
