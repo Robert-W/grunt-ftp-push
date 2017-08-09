@@ -5,8 +5,12 @@
   "homepage": "http://robert-w.github.io/grunt-ftp-push",
   "author": {
     "name": "Robert Winterbottom",
-    "email": "Robbie.Winterbottom@gmail.com"
+    "email": "RWinter85@gmail.com"
   },
+  "contributors": [
+    "Robert Winterbottom <RWinter85@gmail.com>",  
+    "Psykoral <https://github.com/Psykoral>"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/Robert-W/grunt-ftp-push.git"
